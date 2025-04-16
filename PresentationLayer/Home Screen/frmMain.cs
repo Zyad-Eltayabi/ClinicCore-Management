@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Presentation_Tier.Component;
 
 namespace Presentation_Tier
 {
@@ -36,8 +37,9 @@ namespace Presentation_Tier
 
         }
 
-
-
-       
+        private void btnPatients_Click(object sender, EventArgs e)
+        {
+            AddNewFormToMainPanel(new frmManagePatients());
+        }
     }
 }
