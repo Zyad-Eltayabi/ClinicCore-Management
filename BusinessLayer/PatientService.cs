@@ -46,10 +46,13 @@ namespace BusinessLayer
                 case GeneralEnum.SaveMode.Update:
                     return Update(patient);
                 default:
-                  return false;
+                    return false;
             }
         }
 
-       
+        public IEnumerable<Patient> GetAll()
+        {
+            return _unitOfWork.Patients.GetAll();
+        }
     }
 }

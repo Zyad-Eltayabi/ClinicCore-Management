@@ -10,5 +10,6 @@ namespace DomainLayer.Interfaces
     public interface IPatientService
     {
         bool Save(Patient patient); // Save new Patient or update
+        IEnumerable<Patient> GetAll();
     }
 }

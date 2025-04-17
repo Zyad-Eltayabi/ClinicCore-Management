@@ -279,13 +279,13 @@
             Controls.Add(dgvTable);
             Controls.Add(pictureBox1);
             Controls.Add(label1);
-            Cursor = Cursors.Default;
             FormBorderStyle = FormBorderStyle.None;
             Margin = new Padding(3, 4, 3, 4);
             Name = "frmManagePatients";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "frm";
             TopMost = true;
+            Load += frmManagePatients_Load;
             ((System.ComponentModel.ISupportInitialize)dgvTable).EndInit();
             guna2ContextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)btnAddNew).EndInit();

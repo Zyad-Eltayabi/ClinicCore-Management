@@ -39,5 +39,20 @@ namespace Presentation_Tier.Component
             var addPatient = new frmAddNewPatient(_patientService);
             addPatient.ShowDialog();
         }
+
+        private void frmManagePatients_Load(object sender, EventArgs e)
+        {
+            LoadPatientsInfo();
+        }
+
+        private void LoadPatientsInfo()
+        {
+            var patients = _patientService.GetAll();
+            if (patients != null)
+            {
+                dgvTable.DataSource = patients;
+                lbRecords.Text = patients.Count().ToString();
+            }
+        }
     }
 }
