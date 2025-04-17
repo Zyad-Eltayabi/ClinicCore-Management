@@ -54,5 +54,21 @@ namespace Presentation_Tier.Component
                 lbRecords.Text = patients.Count().ToString();
             }
         }
+
+        private void updateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int patientId = int.Parse( dgvTable.SelectedRows[0].Cells["Id"].Value.ToString());
+
+            var patient = _patientService.GetById(patientId);
+
+            if (patient != null)
+            {
+                var form = new frmAddNewPatient(_patientService, patient);
+                form.ShowDialog();
+            }
+            else
+                clsUtilityLibrary.PrintErrorMessage("Patient is not found.");
+
+        }
     }
 }

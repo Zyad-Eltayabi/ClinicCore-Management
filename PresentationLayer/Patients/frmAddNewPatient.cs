@@ -36,7 +36,7 @@ namespace Presentation_Tier.Users
         {
             InitializeComponent();
             _patientService = patientService;
-            _patient = new Patient();
+            _patient = patient;
             _enMode = GeneralEnum.SaveMode.Update;
         }
 
@@ -51,8 +51,8 @@ namespace Presentation_Tier.Users
             switch (_enMode)
             {
                 case GeneralEnum.SaveMode.Add:
-                    _enMode = GeneralEnum.SaveMode.Update;
                     SavePatient();
+                    _enMode = GeneralEnum.SaveMode.Update;
                     break;
                 case GeneralEnum.SaveMode.Update:
                     SavePatient();
@@ -71,7 +71,20 @@ namespace Presentation_Tier.Users
             _patient.DateOfBirth = dtDateOfBirth.Value;
             _patient.Gender = rbMale.Checked;
 
-            if (_patientService.Save(_patient))
+            bool saved = false;
+            switch (_enMode)
+            {
+                case GeneralEnum.SaveMode.Add:
+                    _enMode = GeneralEnum.SaveMode.Update;
+                    saved = _patientService.Add(_patient);
+                    break;
+                case GeneralEnum.SaveMode.Update:
+                    saved = _patientService.Update(_patient);
+                    break;
+                default:
+                    break;
+            }
+            if (saved)
             {
                 lbPatientID.Text = _patient.Id.ToString();
                 this.Text = "Update Patient";
@@ -80,6 +93,36 @@ namespace Presentation_Tier.Users
             else
             {
                 clsUtilityLibrary.PrintErrorMessage("Sorry, Failed To Save");
+            }
+        }
+
+        private void frmAddNewPatient_Load(object sender, EventArgs e)
+        {
+            CheckUpdateMode();
+        }
+
+        private void CheckUpdateMode()
+        {
+            if (_enMode == GeneralEnum.SaveMode.Update)
+            {
+                SetPatientInfo();
+            }
+        }
+
+        private void SetPatientInfo()
+        {
+            if (_patient != null)
+            {
+                lbPatientID.Text = _patient.Id.ToString();
+                txtFullName.Text = _patient.FullName;
+                txtAddress.Text = _patient.Address;
+                txtEmail.Text = _patient.Email;
+                txtPhoneNumber.Text = _patient.PhoneNumber;
+                dtDateOfBirth.Value = _patient.DateOfBirth;
+                if (_patient.Gender)
+                    rbMale.Checked = true;
+                else
+                    rbFemale.Checked = true;
             }
         }
     }

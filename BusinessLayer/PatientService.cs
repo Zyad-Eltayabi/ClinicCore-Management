@@ -15,44 +15,39 @@ namespace BusinessLayer
     {
         private IUnitOfWork _unitOfWork;
 
-        private GeneralEnum.SaveMode _saveMode;
+        public GeneralEnum.SaveMode SaveMode { get; set; }
 
 
         public PatientService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _saveMode = GeneralEnum.SaveMode.Add;
+            SaveMode = GeneralEnum.SaveMode.Add;
         }
 
-        private bool Add(Patient patient)
+        public bool Add(Patient patient)
         {
-            _unitOfWork.Patients.Add(patient);
-            return _unitOfWork.SaveChanges() > 0;
+            if (patient.Id == 0)
+            {
+                _unitOfWork.Patients.Add(patient);
+                return _unitOfWork.SaveChanges() > 0;
+            }
+            return false;
         }
 
-        private bool Update(Patient patient)
+        public bool Update(Patient patient)
         {
             _unitOfWork.Patients.Update(patient);
             return _unitOfWork.SaveChanges() > 0;
         }
 
-        public bool Save(Patient patient)
-        {
-            switch (_saveMode)
-            {
-                case GeneralEnum.SaveMode.Add:
-                    _saveMode = GeneralEnum.SaveMode.Update;
-                    return Add(patient);
-                case GeneralEnum.SaveMode.Update:
-                    return Update(patient);
-                default:
-                    return false;
-            }
-        }
-
         public IEnumerable<Patient> GetAll()
         {
             return _unitOfWork.Patients.GetAll();
+        }
+
+        public Patient GetById(int id)
+        {
+            return _unitOfWork.Patients.GetById(id);
         }
     }
 }

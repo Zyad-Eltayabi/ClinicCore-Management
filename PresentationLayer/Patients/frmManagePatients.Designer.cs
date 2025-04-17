@@ -139,34 +139,36 @@
             guna2ContextMenuStrip1.RenderStyle.SelectionForeColor = Color.White;
             guna2ContextMenuStrip1.RenderStyle.SeparatorColor = Color.Gainsboro;
             guna2ContextMenuStrip1.RenderStyle.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault;
-            guna2ContextMenuStrip1.Size = new Size(169, 108);
+            guna2ContextMenuStrip1.Size = new Size(215, 136);
             // 
             // showDetailsToolStripMenuItem1
             // 
             showDetailsToolStripMenuItem1.Image = (Image)resources.GetObject("showDetailsToolStripMenuItem1.Image");
             showDetailsToolStripMenuItem1.Name = "showDetailsToolStripMenuItem1";
-            showDetailsToolStripMenuItem1.Size = new Size(168, 26);
+            showDetailsToolStripMenuItem1.Size = new Size(214, 26);
             showDetailsToolStripMenuItem1.Text = "Show Details";
             // 
             // addToolStripMenuItem
             // 
             addToolStripMenuItem.Image = (Image)resources.GetObject("addToolStripMenuItem.Image");
             addToolStripMenuItem.Name = "addToolStripMenuItem";
-            addToolStripMenuItem.Size = new Size(168, 26);
+            addToolStripMenuItem.Size = new Size(214, 26);
             addToolStripMenuItem.Text = "Add";
             addToolStripMenuItem.Click += addToolStripMenuItem_Click;
             // 
             // updateToolStripMenuItem
             // 
+            updateToolStripMenuItem.Image = (Image)resources.GetObject("updateToolStripMenuItem.Image");
             updateToolStripMenuItem.Name = "updateToolStripMenuItem";
-            updateToolStripMenuItem.Size = new Size(168, 26);
+            updateToolStripMenuItem.Size = new Size(214, 26);
             updateToolStripMenuItem.Text = "Update";
+            updateToolStripMenuItem.Click += updateToolStripMenuItem_Click;
             // 
             // deleteToolStripMenuItem
             // 
             deleteToolStripMenuItem.Image = (Image)resources.GetObject("deleteToolStripMenuItem.Image");
             deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            deleteToolStripMenuItem.Size = new Size(168, 26);
+            deleteToolStripMenuItem.Size = new Size(214, 26);
             deleteToolStripMenuItem.Text = "Delete";
             // 
             // label2

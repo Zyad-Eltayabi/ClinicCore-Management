@@ -358,6 +358,7 @@
             Name = "frmAddNewPatient";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Add New Patient";
+            Load += frmAddNewPatient_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
