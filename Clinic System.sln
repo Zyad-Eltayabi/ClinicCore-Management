@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PresentationLayer", "PresentationLayer\PresentationLayer.csproj", "{8274AFDF-946D-4ADC-9549-86EDDCBAC737}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0826E205-FBE3-4794-9FEB-8629E26DEA94} = {0826E205-FBE3-4794-9FEB-8629E26DEA94}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{9934A4A9-4CEF-46FB-B062-F3D39D0CF227}"
 EndProject

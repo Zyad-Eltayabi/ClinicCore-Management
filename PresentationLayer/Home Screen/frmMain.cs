@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Presentation_Tier.Component;
-
+﻿using Presentation_Tier.Component;
+using PresentationLayer.Helper;
 namespace Presentation_Tier
 {
     public partial class frmMain : Form
     {
+        private readonly AppServices _services;
 
-        public frmMain()
+        public frmMain(AppServices services)
         {
             InitializeComponent();
+            _services = services;
         }
 
         private void guna2PictureBox2_Click(object sender, EventArgs e)
@@ -39,7 +32,7 @@ namespace Presentation_Tier
 
         private void btnPatients_Click(object sender, EventArgs e)
         {
-            AddNewFormToMainPanel(new frmManagePatients());
+            AddNewFormToMainPanel(new frmManagePatients(_services.PatientService)); 
         }
     }
 }

@@ -154,6 +154,7 @@
             addToolStripMenuItem.Name = "addToolStripMenuItem";
             addToolStripMenuItem.Size = new Size(168, 26);
             addToolStripMenuItem.Text = "Add";
+            addToolStripMenuItem.Click += addToolStripMenuItem_Click;
             // 
             // updateToolStripMenuItem
             // 
@@ -200,6 +201,7 @@
             btnAddNew.SizeMode = PictureBoxSizeMode.Zoom;
             btnAddNew.TabIndex = 3;
             btnAddNew.TabStop = false;
+            btnAddNew.Click += btnAddNew_Click;
             // 
             // pictureBox1
             // 
@@ -277,11 +279,13 @@
             Controls.Add(dgvTable);
             Controls.Add(pictureBox1);
             Controls.Add(label1);
+            Cursor = Cursors.Default;
             FormBorderStyle = FormBorderStyle.None;
             Margin = new Padding(3, 4, 3, 4);
             Name = "frmManagePatients";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "frm";
+            TopMost = true;
             ((System.ComponentModel.ISupportInitialize)dgvTable).EndInit();
             guna2ContextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)btnAddNew).EndInit();

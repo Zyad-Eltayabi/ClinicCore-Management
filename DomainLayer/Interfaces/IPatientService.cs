@@ -7,10 +7,8 @@ using DomainLayer.Models;
 
 namespace DomainLayer.Interfaces
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IPatientService
     {
-         IGenericRepository<Patient> Patients { get; }
-
-        int SaveChanges();
+        bool Save(Patient patient); // Save new Patient or update
     }
 }
