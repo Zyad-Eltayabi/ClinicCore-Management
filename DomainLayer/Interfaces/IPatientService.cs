@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DomainLayer.BaseClasses;
 using DomainLayer.Models;
 
 namespace DomainLayer.Interfaces
@@ -11,7 +12,7 @@ namespace DomainLayer.Interfaces
     {
         IEnumerable<Patient> GetAll();
         Patient GetById(int id);
-        bool Add(Patient patient);
-        bool Update(Patient patient);
+        Result<Patient> Add(Patient patient);
+        Result<Patient> Update(Patient patient);
     }
 }

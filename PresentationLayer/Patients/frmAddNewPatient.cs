@@ -1,4 +1,5 @@
 ﻿using BusinessLayer;
+using DomainLayer.BaseClasses;
 using DomainLayer.Enums;
 using DomainLayer.Interfaces;
 using DomainLayer.Models;
@@ -52,7 +53,6 @@ namespace Presentation_Tier.Users
             {
                 case GeneralEnum.SaveMode.Add:
                     SavePatient();
-                    _enMode = GeneralEnum.SaveMode.Update;
                     break;
                 case GeneralEnum.SaveMode.Update:
                     SavePatient();
@@ -71,28 +71,29 @@ namespace Presentation_Tier.Users
             _patient.DateOfBirth = dtDateOfBirth.Value;
             _patient.Gender = rbMale.Checked;
 
-            bool saved = false;
+            Result<Patient> result = null;
             switch (_enMode)
             {
                 case GeneralEnum.SaveMode.Add:
-                    _enMode = GeneralEnum.SaveMode.Update;
-                    saved = _patientService.Add(_patient);
+                    result = _patientService.Add(_patient);
                     break;
                 case GeneralEnum.SaveMode.Update:
-                    saved = _patientService.Update(_patient);
+                    result = _patientService.Update(_patient);
                     break;
                 default:
                     break;
             }
-            if (saved)
+
+            if (result.IsSuccess)
             {
                 lbPatientID.Text = _patient.Id.ToString();
                 this.Text = "Update Patient";
                 clsUtilityLibrary.PrintInfoMessage("Data Saved Successfully");
+                _enMode = GeneralEnum.SaveMode.Update;
             }
             else
             {
-                clsUtilityLibrary.PrintErrorMessage("Sorry, Failed To Save");
+                clsUtilityLibrary.PrintErrorMessage(result.Message);
             }
         }
 
