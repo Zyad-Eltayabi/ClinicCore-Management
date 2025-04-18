@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer.Repositories;
+using DomainLayer.BaseClasses;
 using DomainLayer.Interfaces;
 using DomainLayer.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer
 {
@@ -20,11 +22,21 @@ namespace DataAccessLayer
             _context = context;
             Patients = new GenericRepository<Patient>(_context);
         }
-
-        public int SaveChanges()
+        public Result<int> SaveChanges()
         {
-            return _context.SaveChanges();
+            try
+            {
+                int affectedRows = _context.SaveChanges();
+                return affectedRows > 0
+                    ? Result<int>.Success(affectedRows, "Changes saved successfully.")
+                    : Result<int>.Failure("No changes were saved to the database.");
+            }
+            catch (Exception ex)
+            {
+                return Result<int>.Failure("An unexpected error occurred: " + ex.Message);
+            }
         }
+
 
         public void Dispose()
         {

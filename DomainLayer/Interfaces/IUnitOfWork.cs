@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DomainLayer.BaseClasses;
 using DomainLayer.Models;
 
 namespace DomainLayer.Interfaces
@@ -11,6 +12,6 @@ namespace DomainLayer.Interfaces
     {
          IGenericRepository<Patient> Patients { get; }
 
-        int SaveChanges();
+        Result<int> SaveChanges();
     }
 }

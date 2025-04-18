@@ -19,7 +19,6 @@ namespace BusinessLayer.Services
         {
             var validator = new PatientValidator(GeneralEnum.SaveMode.Add);
             var validationResult = validator.Validate(patient);
-
             if (!validationResult.IsValid)
             {
                 //collect all errors
@@ -27,10 +26,10 @@ namespace BusinessLayer.Services
                 return Result<Patient>.Failure(message);
             }
             _unitOfWork.Patients.Add(patient);
-            bool isSaved = _unitOfWork.SaveChanges() > 0;
-            return isSaved ?
-                 Result<Patient>.Success(patient)
-                 : Result<Patient>.Failure("Failed to Add patient.");
+            var result = _unitOfWork.SaveChanges();
+            return result.IsSuccess ?
+                Result<Patient>.Success(patient)
+                : Result<Patient>.Failure(result.Message);
         }
 
         public Result<Patient> Update(Patient patient)
@@ -46,10 +45,11 @@ namespace BusinessLayer.Services
             }
 
             _unitOfWork.Patients.Update(patient);
-            bool isSaved = _unitOfWork.SaveChanges() > 0;
-            return isSaved ?
+
+            var result = _unitOfWork.SaveChanges();
+            return result.IsSuccess ?
                 Result<Patient>.Success(patient)
-                : Result<Patient>.Failure("Failed to update patient.");
+                : Result<Patient>.Failure(result.Message);
         }
 
         public IEnumerable<Patient> GetAll()

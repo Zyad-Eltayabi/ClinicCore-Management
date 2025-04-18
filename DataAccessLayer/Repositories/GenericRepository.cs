@@ -17,16 +17,14 @@ namespace DataAccessLayer.Repositories
         protected readonly ApplicationDbContext _context;
 
 
-        public T Add(T entity)
+        public void Add(T entity)
         {
             _context.Set<T>().Add(entity);
-            return entity;
         }
 
-        public T Delete(T entity)
+        public void Delete(T entity)
         {
             _context.Set<T>().Remove(entity);
-            return entity;
         }
 
         public IEnumerable<T> GetAll()
@@ -39,10 +37,9 @@ namespace DataAccessLayer.Repositories
             return _context.Set<T>().Find(id);
         }
 
-        public T Update(T entity)
+        public void Update(T entity)
         {
             _context.Set<T>().Update(entity);
-            return entity;
         }
     }
 }
