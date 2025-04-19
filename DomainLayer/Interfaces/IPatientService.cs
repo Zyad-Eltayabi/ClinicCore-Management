@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using DomainLayer.BaseClasses;
@@ -14,5 +15,7 @@ namespace DomainLayer.Interfaces
         Patient GetById(int id);
         Result<Patient> Add(Patient patient);
         Result<Patient> Update(Patient patient);
+        Result<Patient> Delete(Patient patient);
+        public Result<Patient> Delete(Expression<Func<Patient, bool>> predicate);
     }
 }

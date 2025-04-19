@@ -1,4 +1,5 @@
-﻿using BusinessLayer.Validations;
+﻿using System.Linq.Expressions;
+using BusinessLayer.Validations;
 using DomainLayer.BaseClasses;
 using DomainLayer.Enums;
 using DomainLayer.Interfaces;
@@ -62,5 +63,27 @@ namespace BusinessLayer.Services
             return _unitOfWork.Patients.GetById(id);
         }
 
+        public Result<Patient> Delete(Patient patient)
+        {
+            if (patient == null)
+                return Result<Patient>.Failure("patient is null, can not delete it");
+
+            if (patient.Id <= 0)
+                return Result<Patient>.Failure("Invalid patient ID, can not delete it");
+
+            _unitOfWork.Patients.Delete(patient);
+            var result = _unitOfWork.SaveChanges();
+
+            return result.IsSuccess ?
+                    Result<Patient>.Success(patient)
+                    : Result<Patient>.Failure(result.Message);
+        }
+
+        public Result<Patient> Delete(Expression<Func<Patient, bool>> predicate)
+        {
+            var result = _unitOfWork.Patients.Delete(predicate);
+            return result;
+
+        }
     }
 }

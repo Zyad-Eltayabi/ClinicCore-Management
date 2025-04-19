@@ -22,6 +22,9 @@ namespace DomainLayer.BaseClasses
         public static Result<T> Success(T data, string message = null)
             => new Result<T>(true, message ?? "Operation successful.", data);
 
+        public static Result<T> Success(string message = null)
+            => new Result<T>(true, message ?? "Operation successful.");
+
         public static Result<T> Failure(string message)
             => new Result<T>(false, message);
     }

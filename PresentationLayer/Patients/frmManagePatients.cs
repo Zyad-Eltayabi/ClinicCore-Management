@@ -4,12 +4,15 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BusinessLayer;
 using DataAccessLayer;
+using DomainLayer.BaseClasses;
 using DomainLayer.Interfaces;
+using DomainLayer.Models;
 using Presentation_Tier.Users;
 
 namespace Presentation_Tier.Component
@@ -55,9 +58,15 @@ namespace Presentation_Tier.Component
             }
         }
 
+        private int GetPatientID()
+        {
+            int patientId = int.Parse(dgvTable.SelectedRows[0].Cells["Id"].Value.ToString());
+            return patientId;
+        }
+
         private void updateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int patientId = int.Parse( dgvTable.SelectedRows[0].Cells["Id"].Value.ToString());
+            int patientId = GetPatientID();
 
             var patient = _patientService.GetById(patientId);
 
@@ -69,6 +78,19 @@ namespace Presentation_Tier.Component
             else
                 clsUtilityLibrary.PrintErrorMessage("Patient is not found.");
 
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var patientID = GetPatientID();
+
+            if (MessageBox.Show($"Do you want to delete this patient with id = {patientID}")
+                == DialogResult.OK)
+            {
+                Expression<Func<DomainLayer.Models.Patient, bool>> add = (x) => x.Id == patientID;
+               Result<Patient> result = _patientService.Delete(add);
+                clsUtilityLibrary.PrintInfoMessage(result.Message);
+            }
         }
     }
 }
