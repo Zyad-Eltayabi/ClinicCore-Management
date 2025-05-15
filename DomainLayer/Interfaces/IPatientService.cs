@@ -5,13 +5,14 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using DomainLayer.BaseClasses;
+using DomainLayer.DTOs;
 using DomainLayer.Models;
 
 namespace DomainLayer.Interfaces
 {
     public interface IPatientService
     {
-        Task<IEnumerable<Patient>> GetAll();
+        Task<IEnumerable<PatientDTO>> GetAll();
         Task<Patient> GetById(int id);
         Task<ServiceResult<Patient>> Add(Patient patient);
         Task<ServiceResult<Patient>> Update(Patient patient);

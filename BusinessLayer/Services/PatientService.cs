@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using BusinessLayer.Validations;
 using DomainLayer.BaseClasses;
+using DomainLayer.DTOs;
 using DomainLayer.Enums;
 using DomainLayer.Interfaces;
 using DomainLayer.Models;
@@ -28,7 +29,7 @@ namespace BusinessLayer.Services
                 return ServiceResult<Patient>.Failure(message);
             }
             _unitOfWork.Patients.Add(patient);
-            var result =await _unitOfWork.SaveChanges();
+            var result = await _unitOfWork.SaveChanges();
             return result.IsSuccess ?
                 ServiceResult<Patient>.Success(patient)
                 : ServiceResult<Patient>.Failure(result.Message);
@@ -54,9 +55,30 @@ namespace BusinessLayer.Services
                 : ServiceResult<Patient>.Failure(result.Message);
         }
 
-        public async Task<IEnumerable<Patient>> GetAll()
+        public async Task<IEnumerable<PatientDTO>> GetAll()
         {
-            return await _unitOfWork.Patients.GetAll();
+            try
+            {
+                var patients = await _unitOfWork.Patients.GetAll();
+
+                if (patients == null)
+                    return null;
+
+                return patients.Select(p => new PatientDTO
+                {
+                    Id = p.Id,
+                    FullName = p.FullName,
+                    DateOfBirth = p.DateOfBirth,
+                    Gender = p.Gender,
+                    PhoneNumber = p.PhoneNumber,
+                    Email = p.Email,
+                    Address = p.Address,
+                });
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<Patient> GetById(int id)
