@@ -11,8 +11,8 @@ namespace DomainLayer.Interfaces
 {
     public interface IPatientService
     {
-        IEnumerable<Patient> GetAll();
-        Patient GetById(int id);
+        Task<IEnumerable<Patient>> GetAll();
+        Task<Patient> GetById(int id);
         Result<Patient> Add(Patient patient);
         Result<Patient> Update(Patient patient);
         Result<Patient> Delete(Patient patient);

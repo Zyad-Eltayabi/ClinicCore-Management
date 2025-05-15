@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Threading.Tasks;
 using BusinessLayer.Validations;
 using DomainLayer.BaseClasses;
 using DomainLayer.Enums;
@@ -53,14 +54,14 @@ namespace BusinessLayer.Services
                 : Result<Patient>.Failure(result.Message);
         }
 
-        public IEnumerable<Patient> GetAll()
+        public async Task<IEnumerable<Patient>> GetAll()
         {
-            return _unitOfWork.Patients.GetAll();
+            return await _unitOfWork.Patients.GetAll();
         }
 
-        public Patient GetById(int id)
+        public async Task<Patient> GetById(int id)
         {
-            return _unitOfWork.Patients.GetById(id);
+            return await _unitOfWork.Patients.GetById(id);
         }
 
         public Result<Patient> Delete(Patient patient)

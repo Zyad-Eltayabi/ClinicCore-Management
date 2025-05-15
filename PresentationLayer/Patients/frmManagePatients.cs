@@ -48,9 +48,9 @@ namespace Presentation_Tier.Component
             LoadPatientsInfo();
         }
 
-        private void LoadPatientsInfo()
+        private async Task LoadPatientsInfo()
         {
-            var patients = _patientService.GetAll();
+            var patients = await _patientService.GetAll();
             if (patients != null)
             {
                 dgvTable.DataSource = patients;
@@ -64,11 +64,11 @@ namespace Presentation_Tier.Component
             return patientId;
         }
 
-        private void updateToolStripMenuItem_Click(object sender, EventArgs e)
+        private async Task updateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int patientId = GetPatientID();
 
-            var patient = _patientService.GetById(patientId);
+            var patient = await _patientService.GetById(patientId);
 
             if (patient != null)
             {

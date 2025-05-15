@@ -22,11 +22,11 @@ namespace DataAccessLayer
             _context = context;
             Patients = new GenericRepository<Patient>(_context);
         }
-        public Result<int> SaveChanges()
+        public async Task<Result<int>> SaveChanges()
         {
             try
             {
-                int affectedRows = _context.SaveChanges();
+                int affectedRows =await _context.SaveChangesAsync();
                 return affectedRows > 0
                     ? Result<int>.Success(affectedRows, "Changes saved successfully.")
                     : Result<int>.Failure("No changes were saved to the database.");

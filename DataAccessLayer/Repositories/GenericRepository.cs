@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Threading.Tasks;
 using DomainLayer.BaseClasses;
 using DomainLayer.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,9 +18,9 @@ namespace DataAccessLayer.Repositories
         protected readonly ApplicationDbContext _context;
 
 
-        public void Add(T entity)
+        public async Task Add(T entity)
         {
-            _entity.Add(entity);
+            await _entity.AddAsync(entity);
         }
 
         public void Delete(T entity)
@@ -27,14 +28,16 @@ namespace DataAccessLayer.Repositories
             _entity.Remove(entity);
         }
 
-        public IEnumerable<T> GetAll()
+        public async Task<IEnumerable<T>> GetAll()
         {
-            return _entity.ToList();
+            var items = await _entity.ToListAsync();;
+            return items;
         }
 
-        public T GetById(int id)
+        public async Task<T> GetById(int id)
         {
-            return _entity.Find(id);
+            var item = await _entity.FindAsync(id);
+            return item;
         }
 
         public void Update(T entity)
