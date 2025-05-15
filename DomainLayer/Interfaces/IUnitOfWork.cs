@@ -12,6 +12,6 @@ namespace DomainLayer.Interfaces
     {
          IGenericRepository<Patient> Patients { get; }
 
-        Task<Result<int>> SaveChanges();
+        Task<ServiceResult<int>> SaveChanges();
     }
 }

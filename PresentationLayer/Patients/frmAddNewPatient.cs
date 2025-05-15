@@ -71,7 +71,7 @@ namespace Presentation_Tier.Users
             _patient.DateOfBirth = dtDateOfBirth.Value;
             _patient.Gender = rbMale.Checked;
 
-            Result<Patient> result = null;
+            ServiceResult<Patient> result = null;
             switch (_enMode)
             {
                 case GeneralEnum.SaveMode.Add:

@@ -88,7 +88,7 @@ namespace Presentation_Tier.Component
                 == DialogResult.OK)
             {
                 Expression<Func<DomainLayer.Models.Patient, bool>> add = (x) => x.Id == patientID;
-               Result<Patient> result = _patientService.Delete(add);
+               ServiceResult<Patient> result = _patientService.Delete(add);
                 clsUtilityLibrary.PrintInfoMessage(result.Message);
             }
         }

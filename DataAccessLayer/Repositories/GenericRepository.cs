@@ -45,7 +45,7 @@ namespace DataAccessLayer.Repositories
             _entity.Update(entity);
         }
 
-        Result<T> IGenericRepository<T>.Delete(Expression<Func<T, bool>> predicate)
+        ServiceResult<T> IGenericRepository<T>.Delete(Expression<Func<T, bool>> predicate)
         {
             try
             {
@@ -53,13 +53,13 @@ namespace DataAccessLayer.Repositories
 
                 if (rowsAffected > 0)
                 {
-                    return Result<T>.Success("Delete operation completed.");
+                    return ServiceResult<T>.Success("Delete operation completed.");
                 }
-                return Result<T>.Failure("No changes were saved to the database.");
+                return ServiceResult<T>.Failure("No changes were saved to the database.");
             }
             catch (Exception e)
             {
-                return Result<T>.Failure(e.Message);
+                return ServiceResult<T>.Failure(e.Message);
             }
         }
     }

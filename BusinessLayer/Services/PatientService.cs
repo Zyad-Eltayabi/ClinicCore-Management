@@ -17,7 +17,7 @@ namespace BusinessLayer.Services
             _unitOfWork = unitOfWork;
         }
 
-        public Result<Patient> Add(Patient patient)
+        public async Task<ServiceResult<Patient>> Add(Patient patient)
         {
             var validator = new PatientValidator(GeneralEnum.SaveMode.Add);
             var validationResult = validator.Validate(patient);
@@ -25,16 +25,16 @@ namespace BusinessLayer.Services
             {
                 //collect all errors
                 string message = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
-                return Result<Patient>.Failure(message);
+                return ServiceResult<Patient>.Failure(message);
             }
             _unitOfWork.Patients.Add(patient);
-            var result = _unitOfWork.SaveChanges();
+            var result =await _unitOfWork.S();
             return result.IsSuccess ?
-                Result<Patient>.Success(patient)
-                : Result<Patient>.Failure(result.Message);
+                ServiceResult<Patient>.Success(patient)
+                : ServiceResult<Patient>.Failure(result.Message);
         }
 
-        public Result<Patient> Update(Patient patient)
+        public ServiceResult<Patient> Update(Patient patient)
         {
             var validator = new PatientValidator(GeneralEnum.SaveMode.Update);
             var validationResult = validator.Validate(patient);
@@ -43,15 +43,15 @@ namespace BusinessLayer.Services
             {
                 //collect all errors
                 string message = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
-                return Result<Patient>.Failure(message);
+                return ServiceResult<Patient>.Failure(message);
             }
 
             _unitOfWork.Patients.Update(patient);
 
             var result = _unitOfWork.SaveChanges();
             return result.IsSuccess ?
-                Result<Patient>.Success(patient)
-                : Result<Patient>.Failure(result.Message);
+                ServiceResult<Patient>.Success(patient)
+                : ServiceResult<Patient>.Failure(result.Message);
         }
 
         public async Task<IEnumerable<Patient>> GetAll()
@@ -64,23 +64,23 @@ namespace BusinessLayer.Services
             return await _unitOfWork.Patients.GetById(id);
         }
 
-        public Result<Patient> Delete(Patient patient)
+        public ServiceResult<Patient> Delete(Patient patient)
         {
             if (patient == null)
-                return Result<Patient>.Failure("patient is null, can not delete it");
+                return ServiceResult<Patient>.Failure("patient is null, can not delete it");
 
             if (patient.Id <= 0)
-                return Result<Patient>.Failure("Invalid patient ID, can not delete it");
+                return ServiceResult<Patient>.Failure("Invalid patient ID, can not delete it");
 
             _unitOfWork.Patients.Delete(patient);
             var result = _unitOfWork.SaveChanges();
 
             return result.IsSuccess ?
-                    Result<Patient>.Success(patient)
-                    : Result<Patient>.Failure(result.Message);
+                    ServiceResult<Patient>.Success(patient)
+                    : ServiceResult<Patient>.Failure(result.Message);
         }
 
-        public Result<Patient> Delete(Expression<Func<Patient, bool>> predicate)
+        public ServiceResult<Patient> Delete(Expression<Func<Patient, bool>> predicate)
         {
             var result = _unitOfWork.Patients.Delete(predicate);
             return result;

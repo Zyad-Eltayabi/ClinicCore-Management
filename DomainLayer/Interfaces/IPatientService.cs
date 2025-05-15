@@ -13,9 +13,9 @@ namespace DomainLayer.Interfaces
     {
         Task<IEnumerable<Patient>> GetAll();
         Task<Patient> GetById(int id);
-        Result<Patient> Add(Patient patient);
-        Result<Patient> Update(Patient patient);
-        Result<Patient> Delete(Patient patient);
-        public Result<Patient> Delete(Expression<Func<Patient, bool>> predicate);
+        ServiceResult<Patient> Add(Patient patient);
+        ServiceResult<Patient> Update(Patient patient);
+        ServiceResult<Patient> Delete(Patient patient);
+        public ServiceResult<Patient> Delete(Expression<Func<Patient, bool>> predicate);
     }
 }

@@ -22,18 +22,18 @@ namespace DataAccessLayer
             _context = context;
             Patients = new GenericRepository<Patient>(_context);
         }
-        public async Task<Result<int>> SaveChanges()
+        public async Task<ServiceResult<int>> SaveChanges()
         {
             try
             {
                 int affectedRows =await _context.SaveChangesAsync();
                 return affectedRows > 0
-                    ? Result<int>.Success(affectedRows, "Changes saved successfully.")
-                    : Result<int>.Failure("No changes were saved to the database.");
+                    ? ServiceResult<int>.Success(affectedRows, "Changes saved successfully.")
+                    : ServiceResult<int>.Failure("No changes were saved to the database.");
             }
             catch (Exception ex)
             {
-                return Result<int>.Failure("An unexpected error occurred: " + ex.Message);
+                return ServiceResult<int>.Failure("An unexpected error occurred: " + ex.Message);
             }
         }
 

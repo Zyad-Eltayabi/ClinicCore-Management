@@ -16,6 +16,6 @@ namespace DomainLayer.Interfaces
         void Update(T entity);
         void Delete(T entity);
         Task<IEnumerable<T>> GetAll();
-        public Result<T> Delete(Expression<Func<T, bool>> predicate);
+        public ServiceResult<T> Delete(Expression<Func<T, bool>> predicate);
     }
 }
