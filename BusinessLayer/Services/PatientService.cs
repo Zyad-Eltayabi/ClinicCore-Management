@@ -28,13 +28,13 @@ namespace BusinessLayer.Services
                 return ServiceResult<Patient>.Failure(message);
             }
             _unitOfWork.Patients.Add(patient);
-            var result =await _unitOfWork.S();
+            var result =await _unitOfWork.SaveChanges();
             return result.IsSuccess ?
                 ServiceResult<Patient>.Success(patient)
                 : ServiceResult<Patient>.Failure(result.Message);
         }
 
-        public ServiceResult<Patient> Update(Patient patient)
+        public async Task<ServiceResult<Patient>> Update(Patient patient)
         {
             var validator = new PatientValidator(GeneralEnum.SaveMode.Update);
             var validationResult = validator.Validate(patient);
@@ -48,7 +48,7 @@ namespace BusinessLayer.Services
 
             _unitOfWork.Patients.Update(patient);
 
-            var result = _unitOfWork.SaveChanges();
+            var result = await _unitOfWork.SaveChanges();
             return result.IsSuccess ?
                 ServiceResult<Patient>.Success(patient)
                 : ServiceResult<Patient>.Failure(result.Message);
@@ -64,7 +64,7 @@ namespace BusinessLayer.Services
             return await _unitOfWork.Patients.GetById(id);
         }
 
-        public ServiceResult<Patient> Delete(Patient patient)
+        public async Task<ServiceResult<Patient>> Delete(Patient patient)
         {
             if (patient == null)
                 return ServiceResult<Patient>.Failure("patient is null, can not delete it");
@@ -73,18 +73,24 @@ namespace BusinessLayer.Services
                 return ServiceResult<Patient>.Failure("Invalid patient ID, can not delete it");
 
             _unitOfWork.Patients.Delete(patient);
-            var result = _unitOfWork.SaveChanges();
+            var result = await _unitOfWork.SaveChanges();
 
             return result.IsSuccess ?
                     ServiceResult<Patient>.Success(patient)
                     : ServiceResult<Patient>.Failure(result.Message);
         }
 
-        public ServiceResult<Patient> Delete(Expression<Func<Patient, bool>> predicate)
+        public async Task<ServiceResult<Patient>> Delete(Expression<Func<Patient, bool>> predicate)
         {
-            var result = _unitOfWork.Patients.Delete(predicate);
-            return result;
-
+            try
+            {
+                var result = await _unitOfWork.Patients.Delete(predicate);
+                return ServiceResult<Patient>.Success("Successful deleting.");
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<Patient>.Failure("Some error occurred during deleting in database.");
+            }
         }
     }
 }

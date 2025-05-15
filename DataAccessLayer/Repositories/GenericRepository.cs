@@ -30,7 +30,7 @@ namespace DataAccessLayer.Repositories
 
         public async Task<IEnumerable<T>> GetAll()
         {
-            var items = await _entity.ToListAsync();;
+            var items = await _entity.ToListAsync(); ;
             return items;
         }
 
@@ -45,22 +45,16 @@ namespace DataAccessLayer.Repositories
             _entity.Update(entity);
         }
 
-        ServiceResult<T> IGenericRepository<T>.Delete(Expression<Func<T, bool>> predicate)
+       public async Task<bool> Delete(Expression<Func<T, bool>> predicate)
         {
-            try
-            {
-                var rowsAffected = _entity.Where(predicate).ExecuteDelete();
 
-                if (rowsAffected > 0)
-                {
-                    return ServiceResult<T>.Success("Delete operation completed.");
-                }
-                return ServiceResult<T>.Failure("No changes were saved to the database.");
-            }
-            catch (Exception e)
+            var rowsAffected = await _entity.Where(predicate).ExecuteDeleteAsync();
+
+            if (rowsAffected > 0)
             {
-                return ServiceResult<T>.Failure(e.Message);
+                return true;
             }
+            return false;
         }
     }
 }
