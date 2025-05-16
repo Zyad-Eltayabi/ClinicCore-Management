@@ -18,41 +18,52 @@ namespace BusinessLayer.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ServiceResult<Patient>> Add(Patient patient)
+        public async Task<ServiceResult<PatientDTO>> Add(PatientDTO patientDto)
         {
             var validator = new PatientValidator(GeneralEnum.SaveMode.Add);
-            var validationResult = validator.Validate(patient);
+            var validationResult = validator.Validate(patientDto);
             if (!validationResult.IsValid)
             {
                 //collect all errors
                 string message = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
-                return ServiceResult<Patient>.Failure(message);
+                return ServiceResult<PatientDTO>.Failure(message);
             }
-            _unitOfWork.Patients.Add(patient);
+
+            // manual mapping patient entity with patient dto
+            Patient patient = new()
+            {
+                FullName = patientDto.FullName,
+                DateOfBirth = patientDto.DateOfBirth,
+                Gender = patientDto.Gender,
+                PhoneNumber = patientDto.PhoneNumber,
+                Email = patientDto.Email,
+                Address = patientDto.Address,
+            };
+
+            await _unitOfWork.Patients.Add(patient);
             var result = await _unitOfWork.SaveChanges();
-            return result.IsSuccess ?
-                ServiceResult<Patient>.Success(patient)
-                : ServiceResult<Patient>.Failure(result.Message);
+            return result ?
+                ServiceResult<PatientDTO>.Success(patientDto)
+                : ServiceResult<PatientDTO>.Failure("internal error occurred");
         }
 
         public async Task<ServiceResult<Patient>> Update(Patient patient)
         {
-            var validator = new PatientValidator(GeneralEnum.SaveMode.Update);
-            var validationResult = validator.Validate(patient);
+            //var validator = new PatientValidator(GeneralEnum.SaveMode.Update);
+            //var validationResult = validator.Validate(patient);
 
-            if (!validationResult.IsValid)
-            {
-                //collect all errors
-                string message = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
-                return ServiceResult<Patient>.Failure(message);
-            }
-
+            //if (!validationResult.IsValid)
+            //{
+            //    //collect all errors
+            //    string message = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
+            //    return ServiceResult<Patient>.Failure(message);
+            //}
             _unitOfWork.Patients.Update(patient);
 
             var result = await _unitOfWork.SaveChanges();
-            return result.IsSuccess ?
+            return result ?
                 ServiceResult<Patient>.Success(patient)
-                : ServiceResult<Patient>.Failure(result.Message);
+                : ServiceResult<Patient>.Failure("internal error occurred");
         }
 
         public async Task<IEnumerable<PatientDTO>> GetAll()
@@ -97,9 +108,9 @@ namespace BusinessLayer.Services
             _unitOfWork.Patients.Delete(patient);
             var result = await _unitOfWork.SaveChanges();
 
-            return result.IsSuccess ?
+            return result ?
                     ServiceResult<Patient>.Success(patient)
-                    : ServiceResult<Patient>.Failure(result.Message);
+                    : ServiceResult<Patient>.Failure("internal error occurred");
         }
 
         public async Task<ServiceResult<Patient>> Delete(Expression<Func<Patient, bool>> predicate)

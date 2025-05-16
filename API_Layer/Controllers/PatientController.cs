@@ -29,5 +29,16 @@ namespace ClinicAPI.Controllers
             };
         }
 
+        [HttpPost]
+        public async Task<ActionResult<PatientDTO>> Add(PatientDTO patientDTO)
+        {
+            var result = await _patientService.Add(patientDTO);
+            return result.IsSuccess switch
+            {
+                true => Ok(result),
+                _ => BadRequest(result.Message)
+            };
+        }
+
     }
 }

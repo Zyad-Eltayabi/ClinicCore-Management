@@ -1,10 +1,11 @@
-﻿using DomainLayer.Enums;
+﻿using DomainLayer.DTOs;
+using DomainLayer.Enums;
 using DomainLayer.Models;
 using FluentValidation;
 
 namespace BusinessLayer.Validations
 {
-    public class PatientValidator : AbstractValidator<Patient>
+    public class PatientValidator : AbstractValidator<PatientDTO>
     {
         public PatientValidator(GeneralEnum.SaveMode mode)
         {
