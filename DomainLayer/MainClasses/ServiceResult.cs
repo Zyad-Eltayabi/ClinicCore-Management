@@ -11,23 +11,35 @@ namespace DomainLayer.BaseClasses
         public bool IsSuccess { get; private set; }
         public string Message { get; private set; }
         public T Data { get; private set; }
+        public ServiceErrorType ErrorType { get; private set; } = ServiceErrorType.None;
 
-        private ServiceResult(bool isSuccess, string message, T data = default)
+
+        private ServiceResult(ServiceErrorType ErrorType, bool isSuccess, string message, T data = default)
         {
             IsSuccess = isSuccess;
             Message = message;
             Data = data;
         }
 
-        public static ServiceResult<T> Success(T data, string message = null)
-            => new ServiceResult<T>(true, message ?? "Operation successful.", data);
+        public static ServiceResult<T> Success(T data)
+            => new ServiceResult<T>(ServiceErrorType.Success,true, string.Empty, data);
 
-        public static ServiceResult<T> Success(string message = null)
-            => new ServiceResult<T>(true, message ?? "Operation successful.");
+        public static ServiceResult<T> Success()
+            => new ServiceResult<T>(ServiceErrorType.Success, true, string.Empty);
 
-        public static ServiceResult<T> Failure(string message)
-            => new ServiceResult<T>(false, message);
+        public static ServiceResult<T> Failure(string message, ServiceErrorType ErrorType)
+            => new ServiceResult<T>(ErrorType, false, message);
     }
 
+    // Error types that can be mapped to HTTP status codes in the API layer
+    public enum ServiceErrorType
+    {
+        None = 0,
+        Success = 1,
+        ValidationError = 400,   // Maps to 400 Bad Request
+        NotFound = 404,          // Maps to 404 Not Found
+        Conflict = 409,          // Maps to 409 Conflict
+        ServerError = 500        // Maps to 500 Internal Server Error
+    }
 
 }

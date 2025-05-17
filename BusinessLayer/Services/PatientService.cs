@@ -26,7 +26,7 @@ namespace BusinessLayer.Services
             {
                 //collect all errors
                 string message = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
-                return ServiceResult<PatientDTO>.Failure(message);
+                return ServiceResult<PatientDTO>.Failure(message,ServiceErrorType.ValidationError);
             }
 
             // manual mapping patient entity with patient dto
@@ -44,7 +44,7 @@ namespace BusinessLayer.Services
             var result = await _unitOfWork.SaveChanges();
             return result ?
                 ServiceResult<PatientDTO>.Success(patientDto)
-                : ServiceResult<PatientDTO>.Failure("internal error occurred");
+                : ServiceResult<PatientDTO>.Failure("internal error occurred",ServiceErrorType.ServerError);
         }
 
         public async Task<ServiceResult<Patient>> Update(Patient patient)
@@ -63,7 +63,7 @@ namespace BusinessLayer.Services
             var result = await _unitOfWork.SaveChanges();
             return result ?
                 ServiceResult<Patient>.Success(patient)
-                : ServiceResult<Patient>.Failure("internal error occurred");
+                : ServiceResult<Patient>.Failure("internal error occurred",ServiceErrorType.ServerError);
         }
 
         public async Task<IEnumerable<PatientDTO>> GetAll()
@@ -100,17 +100,18 @@ namespace BusinessLayer.Services
         public async Task<ServiceResult<Patient>> Delete(Patient patient)
         {
             if (patient == null)
-                return ServiceResult<Patient>.Failure("patient is null, can not delete it");
+                return ServiceResult<Patient>.Failure("patient is null, can not delete it", ServiceErrorType.ValidationError);
 
             if (patient.Id <= 0)
-                return ServiceResult<Patient>.Failure("Invalid patient ID, can not delete it");
+                return ServiceResult<Patient>.Failure("Invalid patient ID, can not delete it", ServiceErrorType.ValidationError);
 
             _unitOfWork.Patients.Delete(patient);
             var result = await _unitOfWork.SaveChanges();
 
             return result ?
                     ServiceResult<Patient>.Success(patient)
-                    : ServiceResult<Patient>.Failure("internal error occurred");
+                    : ServiceResult<Patient>.Failure("Some error occurred during deleting in database.",
+                    ServiceErrorType.ServerError);
         }
 
         public async Task<ServiceResult<Patient>> Delete(Expression<Func<Patient, bool>> predicate)
@@ -118,11 +119,11 @@ namespace BusinessLayer.Services
             try
             {
                 var result = await _unitOfWork.Patients.Delete(predicate);
-                return ServiceResult<Patient>.Success("Successful deleting.");
+                return ServiceResult<Patient>.Success();
             }
             catch (Exception ex)
             {
-                return ServiceResult<Patient>.Failure("Some error occurred during deleting in database.");
+                return ServiceResult<Patient>.Failure("Some error occurred during deleting in database.",ServiceErrorType.ServerError);
             }
         }
     }
