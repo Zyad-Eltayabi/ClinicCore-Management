@@ -1,6 +1,6 @@
 ﻿using DomainLayer.BaseClasses;
 using DomainLayer.DTOs;
-using DomainLayer.Interfaces;
+using DomainLayer.Interfaces.ServicesInterfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAPI.Controllers

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
 using DomainLayer.BaseClasses;
 using DomainLayer.DTOs;
 using DomainLayer.Models;
 
-namespace DomainLayer.Interfaces
+namespace DomainLayer.Interfaces.ServicesInterfaces
 {
     public interface IPatientService
     {

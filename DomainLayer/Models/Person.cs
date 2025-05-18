@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DomainLayer.BaseClasses
+namespace DomainLayer.Models
 {
     public abstract class Person
     {

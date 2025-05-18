@@ -1,8 +1,8 @@
-﻿using DataAccessLayer.Configurations;
+﻿using DataAccessLayer.Persistence.Configurations;
 using DomainLayer.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataAccessLayer
+namespace DataAccessLayer.Persistence
 {
     public class ApplicationDbContext : DbContext
     {

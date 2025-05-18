@@ -1,11 +1,11 @@
 ﻿using System.Linq.Expressions;
-using System.Threading.Tasks;
 using AutoMapper;
 using BusinessLayer.Validations;
 using DomainLayer.BaseClasses;
 using DomainLayer.DTOs;
 using DomainLayer.Enums;
 using DomainLayer.Interfaces;
+using DomainLayer.Interfaces.ServicesInterfaces;
 using DomainLayer.Models;
 
 namespace BusinessLayer.Services

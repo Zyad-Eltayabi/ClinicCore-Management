@@ -7,7 +7,7 @@ using DomainLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DataAccessLayer.Configurations
+namespace DataAccessLayer.Persistence.Configurations
 {
     public class TablesConfigurations
     {

@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
-using System.Threading.Tasks;
-using DomainLayer.BaseClasses;
-using DomainLayer.Interfaces;
+using DataAccessLayer.Persistence;
+using DomainLayer.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Repositories
@@ -45,7 +44,7 @@ namespace DataAccessLayer.Repositories
             _entity.Update(entity);
         }
 
-       public async Task<bool> Delete(Expression<Func<T, bool>> predicate)
+        public async Task<bool> Delete(Expression<Func<T, bool>> predicate)
         {
 
             var rowsAffected = await _entity.Where(predicate).ExecuteDeleteAsync();

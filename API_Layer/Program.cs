@@ -1,7 +1,9 @@
 using BusinessLayer.Mapping;
 using BusinessLayer.Services;
-using DataAccessLayer;
+using DataAccessLayer.Persistence;
+using DataAccessLayer.UnitOfWork;
 using DomainLayer.Interfaces;
+using DomainLayer.Interfaces.ServicesInterfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

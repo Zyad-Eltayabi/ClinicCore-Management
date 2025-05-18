@@ -4,10 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using DomainLayer.BaseClasses;
 using DomainLayer.Models;
 
-namespace DomainLayer.Interfaces
+namespace DomainLayer.Interfaces.Repositories
 {
     public interface IGenericRepository<T> where T : class
     {

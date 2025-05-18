@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccessLayer.Persistence;
 using DataAccessLayer.Repositories;
 using DomainLayer.BaseClasses;
 using DomainLayer.Interfaces;
+using DomainLayer.Interfaces.Repositories;
 using DomainLayer.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataAccessLayer
+namespace DataAccessLayer.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
