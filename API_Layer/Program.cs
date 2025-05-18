@@ -1,3 +1,4 @@
+using BusinessLayer.Mapping;
 using BusinessLayer.Services;
 using DataAccessLayer;
 using DomainLayer.Interfaces;
@@ -20,6 +21,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Register Services
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

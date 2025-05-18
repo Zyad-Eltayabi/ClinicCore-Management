@@ -12,9 +12,9 @@ namespace DomainLayer.Interfaces
 {
     public interface IPatientService
     {
-        Task<IEnumerable<PatientDTO>> GetAll();
+        Task<IEnumerable<PatientDto>> GetAll();
         Task<Patient> GetById(int id);
-        Task<ServiceResult<PatientDTO>> Add(PatientDTO patient);
+        Task<ServiceResult<PatientDto>> Add(PatientDto patient);
         Task<ServiceResult<Patient>> Update(Patient patient);
         Task<ServiceResult<Patient>> Delete(Patient patient);
         Task<ServiceResult<Patient>> Delete(Expression<Func<Patient, bool>> predicate);

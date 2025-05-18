@@ -1,8 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using DomainLayer.BaseClasses;
 using DomainLayer.DTOs;
 using DomainLayer.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAPI.Controllers
@@ -19,7 +17,9 @@ namespace ClinicAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PatientDTO>>> Get()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult<IEnumerable<PatientDto>>> Get()
         {
             var patients = await _patientService.GetAll();
             return patients switch
@@ -30,15 +30,27 @@ namespace ClinicAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<PatientDTO>> Add(PatientDTO patientDTO)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<PatientDto>> Add([FromBody] PatientDto patientDTO)
         {
             var result = await _patientService.Add(patientDTO);
-            return result.IsSuccess switch
-            {
-                true => Ok(result),
-                _ => BadRequest(result.Message)
-            };
-        }
 
+            return result.ErrorType switch
+            {
+                ServiceErrorType.Success => CreatedAtAction(nameof(Add), result.Data),
+
+                ServiceErrorType.ValidationError => BadRequest(result.Message),
+
+                ServiceErrorType.DatabaseError => StatusCode(StatusCodes.Status503ServiceUnavailable,
+                result.Message),
+
+                _ => StatusCode(StatusCodes.Status500InternalServerError,
+                "An unexpected error occurred while processing your request")
+            };
+
+        }
     }
 }

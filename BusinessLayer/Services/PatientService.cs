@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Threading.Tasks;
+using AutoMapper;
 using BusinessLayer.Validations;
 using DomainLayer.BaseClasses;
 using DomainLayer.DTOs;
@@ -11,14 +12,16 @@ namespace BusinessLayer.Services
 {
     public class PatientService : IPatientService
     {
-        private IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public PatientService(IUnitOfWork unitOfWork)
+        public PatientService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public async Task<ServiceResult<PatientDTO>> Add(PatientDTO patientDto)
+        public async Task<ServiceResult<PatientDto>> Add(PatientDto patientDto)
         {
             var validator = new PatientValidator(GeneralEnum.SaveMode.Add);
             var validationResult = validator.Validate(patientDto);
@@ -26,25 +29,20 @@ namespace BusinessLayer.Services
             {
                 //collect all errors
                 string message = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
-                return ServiceResult<PatientDTO>.Failure(message,ServiceErrorType.ValidationError);
+                return ServiceResult<PatientDto>.Failure(message, ServiceErrorType.ValidationError);
             }
 
-            // manual mapping patient entity with patient dto
-            Patient patient = new()
-            {
-                FullName = patientDto.FullName,
-                DateOfBirth = patientDto.DateOfBirth,
-                Gender = patientDto.Gender,
-                PhoneNumber = patientDto.PhoneNumber,
-                Email = patientDto.Email,
-                Address = patientDto.Address,
-            };
-
+            var patient = _mapper.Map<Patient>(patientDto);
             await _unitOfWork.Patients.Add(patient);
             var result = await _unitOfWork.SaveChanges();
-            return result ?
-                ServiceResult<PatientDTO>.Success(patientDto)
-                : ServiceResult<PatientDTO>.Failure("internal error occurred",ServiceErrorType.ServerError);
+
+            if (result)
+            {
+                return ServiceResult<PatientDto>.Success(_mapper.Map<PatientDto>(patient));
+            }
+
+            return ServiceResult<PatientDto>.Failure("Failed to add new patient in database",
+              ServiceErrorType.DatabaseError);
         }
 
         public async Task<ServiceResult<Patient>> Update(Patient patient)
@@ -63,33 +61,18 @@ namespace BusinessLayer.Services
             var result = await _unitOfWork.SaveChanges();
             return result ?
                 ServiceResult<Patient>.Success(patient)
-                : ServiceResult<Patient>.Failure("internal error occurred",ServiceErrorType.ServerError);
+                : ServiceResult<Patient>.Failure("internal error occurred", ServiceErrorType.ServerError);
         }
 
-        public async Task<IEnumerable<PatientDTO>> GetAll()
+        public async Task<IEnumerable<PatientDto>> GetAll()
         {
-            try
-            {
-                var patients = await _unitOfWork.Patients.GetAll();
+            var patients = await _unitOfWork.Patients.GetAll();
 
-                if (patients == null)
-                    return null;
-
-                return patients.Select(p => new PatientDTO
-                {
-                    Id = p.Id,
-                    FullName = p.FullName,
-                    DateOfBirth = p.DateOfBirth,
-                    Gender = p.Gender,
-                    PhoneNumber = p.PhoneNumber,
-                    Email = p.Email,
-                    Address = p.Address,
-                });
-            }
-            catch (Exception ex)
-            {
+            if (patients == null)
                 return null;
-            }
+
+            var result = _mapper.Map<IEnumerable<PatientDto>>(patients);
+            return result;
         }
 
         public async Task<Patient> GetById(int id)
@@ -123,7 +106,7 @@ namespace BusinessLayer.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<Patient>.Failure("Some error occurred during deleting in database.",ServiceErrorType.ServerError);
+                return ServiceResult<Patient>.Failure("Some error occurred during deleting in database.", ServiceErrorType.ServerError);
             }
         }
     }

@@ -7,7 +7,7 @@ using DomainLayer.BaseClasses;
 
 namespace DomainLayer.DTOs
 {
-    public class PatientDTO : Person
+    public class PatientDto : Person
     {
         public DateTime DateOfRegistration { get; set; }
     }

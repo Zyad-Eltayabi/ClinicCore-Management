@@ -5,7 +5,7 @@ using FluentValidation;
 
 namespace BusinessLayer.Validations
 {
-    public class PatientValidator : AbstractValidator<PatientDTO>
+    public class PatientValidator : AbstractValidator<PatientDto>
     {
         public PatientValidator(GeneralEnum.SaveMode mode)
         {
