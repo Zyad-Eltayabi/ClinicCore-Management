@@ -8,6 +8,7 @@ using DomainLayer.Helpers;
 using DomainLayer.Interfaces;
 using DomainLayer.Interfaces.ServicesInterfaces;
 using DomainLayer.Models;
+using FluentValidation.Results;
 
 namespace BusinessLayer.Services
 {
@@ -22,17 +23,11 @@ namespace BusinessLayer.Services
             _mapper = mapper;
         }
 
-        public async Task<ServiceResult<PatientDto>> Add(PatientDto patientDto)
+        public async Task<Result<PatientDto>> Add(PatientDto patientDto)
         {
-            var validator = new PatientValidator(GeneralEnum.SaveMode.Add);
-            var validationResult = validator.Validate(patientDto);
-            if (!validationResult.IsValid)
-            {
-                //collect all errors
-                string message = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
-                throw new ValidationException(message);
-                // return ServiceResult<PatientDto>.Failure(message, ServiceErrorType.ValidationError);
-            }
+            var validations = ValidatePatient(patientDto, GeneralEnum.SaveMode.Update);
+            if (!validations.IsValid)
+                return Result<PatientDto>.Failure(validations.ErrorMessage, ServiceErrorType.ValidationError);
 
             var patient = _mapper.Map<Patient>(patientDto);
             await _unitOfWork.Patients.Add(patient);
@@ -40,30 +35,46 @@ namespace BusinessLayer.Services
 
             if (result)
             {
-                return ServiceResult<PatientDto>.Success(_mapper.Map<PatientDto>(patient));
+                return Result<PatientDto>.Success(_mapper.Map<PatientDto>(patient));
             }
 
-            return ServiceResult<PatientDto>.Failure("Failed to add new patient in database",
+            return Result<PatientDto>.Failure("Failed to add new patient in database",
               ServiceErrorType.DatabaseError);
         }
 
-        public async Task<ServiceResult<Patient>> Update(Patient patient)
+        private ValidationsResult ValidatePatient(PatientDto patient, GeneralEnum.SaveMode saveMode)
         {
-            //var validator = new PatientValidator(GeneralEnum.SaveMode.Update);
-            //var validationResult = validator.Validate(patient);
+            var validator = new PatientValidator(saveMode);
+            var validationResult = validator.Validate(patient);
+            if (!validationResult.IsValid)
+            {
+                string message = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
+                return new ValidationsResult(false, message);
+            }
+            return new ValidationsResult(true, "");
+        }
 
-            //if (!validationResult.IsValid)
-            //{
-            //    //collect all errors
-            //    string message = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
-            //    return ServiceResult<Patient>.Failure(message);
-            //}
-            _unitOfWork.Patients.Update(patient);
+        public async Task<Result<PatientDto>> Update(PatientDto patient)
+        {
+            if (patient == null)
+                return Result<PatientDto>.Failure("Patient can not be null", ServiceErrorType.ValidationError);
 
+            // validate patientDto object
+            var validations = ValidatePatient(patient, GeneralEnum.SaveMode.Update);
+            if (!validations.IsValid)
+                return Result<PatientDto>.Failure(validations.ErrorMessage, ServiceErrorType.ValidationError);
+
+            var updatedPatient = await _unitOfWork.Patients.GetById(patient.Id);
+
+            if (updatedPatient == null)
+                return Result<PatientDto>.Failure("Patient is not found to update", ServiceErrorType.NotFound);
+
+            _mapper.Map(patient, updatedPatient);
             var result = await _unitOfWork.SaveChanges();
+
             return result ?
-                ServiceResult<Patient>.Success(patient)
-                : ServiceResult<Patient>.Failure("internal error occurred", ServiceErrorType.ServerError);
+                Result<PatientDto>.Success()
+                : Result<PatientDto>.Failure("Failed to update the patient", ServiceErrorType.DatabaseError);
         }
 
         public async Task<IEnumerable<PatientDto>> GetAll()
@@ -77,26 +88,26 @@ namespace BusinessLayer.Services
             return result;
         }
 
-        public async Task<ServiceResult<PatientDto>> GetById(int id)
+        public async Task<Result<PatientDto>> GetById(int id)
         {
             var patient = await _unitOfWork.Patients.GetById(id);
             if (patient == null)
             {
-                return ServiceResult<PatientDto>
+                return Result<PatientDto>
                     .Failure("Invalid patient id, the patient with this id is not found.",
                     ServiceErrorType.NotFound);
             }
 
             var result = _mapper.Map<PatientDto>(patient);
-            return ServiceResult<PatientDto>.Success(result);
+            return Result<PatientDto>.Success(result);
         }
 
-        public async Task<ServiceResult<Patient>> Delete(int patientId)
+        public async Task<Result<PatientDto>> Delete(int patientId)
         {
             var patient = await _unitOfWork.Patients.GetById(patientId);
 
             if (patient is null)
-                return ServiceResult<Patient>
+                return Result<PatientDto>
                     .Failure($"Invalid patient ID, there was not patient with id  = {patientId}",
                     ServiceErrorType.NotFound);
 
@@ -104,21 +115,21 @@ namespace BusinessLayer.Services
             var result = await _unitOfWork.SaveChanges();
 
             return result ?
-                    ServiceResult<Patient>.Success(patient)
-                    : ServiceResult<Patient>.Failure("Some error occurred during deleting in database.",
+                    Result<PatientDto>.Success(null)
+                    : Result<PatientDto>.Failure("Some error occurred during deleting in database.",
                     ServiceErrorType.DatabaseError);
         }
 
-        public async Task<ServiceResult<Patient>> Delete(Expression<Func<Patient, bool>> predicate)
+        public async Task<Result<Patient>> Delete(Expression<Func<Patient, bool>> predicate)
         {
             try
             {
                 var result = await _unitOfWork.Patients.Delete(predicate);
-                return ServiceResult<Patient>.Success();
+                return Result<Patient>.Success();
             }
             catch (Exception ex)
             {
-                return ServiceResult<Patient>.Failure("Some error occurred during deleting in database.", ServiceErrorType.ServerError);
+                return Result<Patient>.Failure("Some error occurred during deleting in database.", ServiceErrorType.ServerError);
             }
         }
     }

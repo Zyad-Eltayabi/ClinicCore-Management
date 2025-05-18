@@ -87,6 +87,25 @@ namespace ClinicAPI.Controllers
             };
         }
 
-
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Update(PatientDto patientDto)
+        {
+            var result = await _patientService.Update(patientDto);
+            return result.ErrorType switch
+            {
+                ServiceErrorType.Success => NoContent(),
+                ServiceErrorType.ValidationError => BadRequest(result.Message),
+                ServiceErrorType.NotFound => NotFound(result.Message),
+                ServiceErrorType.DatabaseError => StatusCode(StatusCodes.Status503ServiceUnavailable,
+                result.Message),
+                _ => StatusCode(StatusCodes.Status500InternalServerError,
+                result.Message)
+            };
+        }
     }
 }

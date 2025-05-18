@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DomainLayer.Helpers
 {
-    public class ServiceResult<T>
+    public class Result<T>
     {
         public bool IsSuccess { get; private set; }
         public string Message { get; private set; }
@@ -14,7 +14,7 @@ namespace DomainLayer.Helpers
         public ServiceErrorType ErrorType { get; private set; } = ServiceErrorType.None;
 
 
-        private ServiceResult(ServiceErrorType errorType, bool isSuccess, string message, T data = default)
+        private Result(ServiceErrorType errorType, bool isSuccess, string message, T data = default)
         {
             IsSuccess = isSuccess;
             Message = message;
@@ -22,14 +22,14 @@ namespace DomainLayer.Helpers
             ErrorType = errorType;
         }
 
-        public static ServiceResult<T> Success(T data)
-            => new ServiceResult<T>(ServiceErrorType.Success, true, string.Empty, data);
+        public static Result<T> Success(T data)
+            => new Result<T>(ServiceErrorType.Success, true, string.Empty, data);
 
-        public static ServiceResult<T> Success()
-            => new ServiceResult<T>(ServiceErrorType.Success, true, string.Empty);
+        public static Result<T> Success()
+            => new Result<T>(ServiceErrorType.Success, true, string.Empty);
 
-        public static ServiceResult<T> Failure(string message, ServiceErrorType ErrorType)
-            => new ServiceResult<T>(ErrorType, false, message);
+        public static Result<T> Failure(string message, ServiceErrorType ErrorType)
+            => new Result<T>(ErrorType, false, message);
     }
 
     // Error types that can be mapped to HTTP status codes in the API layer
