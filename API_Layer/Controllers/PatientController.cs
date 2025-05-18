@@ -1,5 +1,5 @@
-﻿using DomainLayer.BaseClasses;
-using DomainLayer.DTOs;
+﻿using DomainLayer.DTOs;
+using DomainLayer.Helpers;
 using DomainLayer.Interfaces.ServicesInterfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -52,6 +52,21 @@ namespace ClinicAPI.Controllers
             };
 
         }
-        
+
+        [HttpGet, Route("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<PatientDto>> GetById([FromRoute] int id)
+        {
+            var result = await _patientService.GetById(id);
+            return result.ErrorType switch
+            {
+                ServiceErrorType.Success => Ok(result.Data),
+                ServiceErrorType.NotFound => NotFound(result.Message),
+                _ => StatusCode(500, "internal database error !!")
+            };
+        }
+
     }
 }

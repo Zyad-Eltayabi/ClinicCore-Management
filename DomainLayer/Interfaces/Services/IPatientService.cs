@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
-using DomainLayer.BaseClasses;
 using DomainLayer.DTOs;
+using DomainLayer.Helpers;
 using DomainLayer.Models;
 
 namespace DomainLayer.Interfaces.ServicesInterfaces
@@ -8,7 +8,7 @@ namespace DomainLayer.Interfaces.ServicesInterfaces
     public interface IPatientService
     {
         Task<IEnumerable<PatientDto>> GetAll();
-        Task<Patient> GetById(int id);
+        Task<ServiceResult<PatientDto>> GetById(int id);
         Task<ServiceResult<PatientDto>> Add(PatientDto patient);
         Task<ServiceResult<Patient>> Update(Patient patient);
         Task<ServiceResult<Patient>> Delete(Patient patient);

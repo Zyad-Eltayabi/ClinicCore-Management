@@ -2,9 +2,9 @@
 using System.Linq.Expressions;
 using AutoMapper;
 using BusinessLayer.Validations;
-using DomainLayer.BaseClasses;
 using DomainLayer.DTOs;
 using DomainLayer.Enums;
+using DomainLayer.Helpers;
 using DomainLayer.Interfaces;
 using DomainLayer.Interfaces.ServicesInterfaces;
 using DomainLayer.Models;
@@ -31,7 +31,7 @@ namespace BusinessLayer.Services
                 //collect all errors
                 string message = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
                 throw new ValidationException(message);
-               // return ServiceResult<PatientDto>.Failure(message, ServiceErrorType.ValidationError);
+                // return ServiceResult<PatientDto>.Failure(message, ServiceErrorType.ValidationError);
             }
 
             var patient = _mapper.Map<Patient>(patientDto);
@@ -77,9 +77,18 @@ namespace BusinessLayer.Services
             return result;
         }
 
-        public async Task<Patient> GetById(int id)
+        public async Task<ServiceResult<PatientDto>> GetById(int id)
         {
-            return await _unitOfWork.Patients.GetById(id);
+            var patient = await _unitOfWork.Patients.GetById(id);
+            if (patient == null)
+            {
+                return ServiceResult<PatientDto>
+                    .Failure("Invalid patient id, the patient with this id is not found.",
+                    ServiceErrorType.NotFound);
+            }
+
+            var result = _mapper.Map<PatientDto>(patient);
+            return ServiceResult<PatientDto>.Success(result);
         }
 
         public async Task<ServiceResult<Patient>> Delete(Patient patient)
