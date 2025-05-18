@@ -1,5 +1,6 @@
 using BusinessLayer.Mapping;
 using BusinessLayer.Services;
+using ClinicAPI.Middlewares;
 using DataAccessLayer.Persistence;
 using DataAccessLayer.UnitOfWork;
 using DomainLayer.Interfaces;
@@ -20,10 +21,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer((builder.Configuration.GetConnectionString("Default")));
 });
 
-// Register Services
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddExceptionHandler<GlobalErrorHandling>();
+builder.Services.AddProblemDetails();
+
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -36,6 +39,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseExceptionHandler();
 
 app.MapControllers();
 

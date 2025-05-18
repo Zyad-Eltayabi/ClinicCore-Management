@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using AutoMapper;
 using BusinessLayer.Validations;
 using DomainLayer.BaseClasses;
@@ -29,7 +30,8 @@ namespace BusinessLayer.Services
             {
                 //collect all errors
                 string message = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
-                return ServiceResult<PatientDto>.Failure(message, ServiceErrorType.ValidationError);
+                throw new ValidationException(message);
+               // return ServiceResult<PatientDto>.Failure(message, ServiceErrorType.ValidationError);
             }
 
             var patient = _mapper.Map<Patient>(patientDto);
