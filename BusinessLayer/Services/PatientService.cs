@@ -91,13 +91,14 @@ namespace BusinessLayer.Services
             return ServiceResult<PatientDto>.Success(result);
         }
 
-        public async Task<ServiceResult<Patient>> Delete(Patient patient)
+        public async Task<ServiceResult<Patient>> Delete(int patientId)
         {
-            if (patient == null)
-                return ServiceResult<Patient>.Failure("patient is null, can not delete it", ServiceErrorType.ValidationError);
+            var patient = await _unitOfWork.Patients.GetById(patientId);
 
-            if (patient.Id <= 0)
-                return ServiceResult<Patient>.Failure("Invalid patient ID, can not delete it", ServiceErrorType.ValidationError);
+            if (patient is null)
+                return ServiceResult<Patient>
+                    .Failure($"Invalid patient ID, there was not patient with id  = {patientId}",
+                    ServiceErrorType.NotFound);
 
             _unitOfWork.Patients.Delete(patient);
             var result = await _unitOfWork.SaveChanges();
@@ -105,7 +106,7 @@ namespace BusinessLayer.Services
             return result ?
                     ServiceResult<Patient>.Success(patient)
                     : ServiceResult<Patient>.Failure("Some error occurred during deleting in database.",
-                    ServiceErrorType.ServerError);
+                    ServiceErrorType.DatabaseError);
         }
 
         public async Task<ServiceResult<Patient>> Delete(Expression<Func<Patient, bool>> predicate)

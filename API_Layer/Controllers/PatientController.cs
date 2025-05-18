@@ -68,5 +68,25 @@ namespace ClinicAPI.Controllers
             };
         }
 
+        [HttpDelete, Route("{patientId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Delete([FromRoute] int patientId)
+        {
+            var result = await _patientService.Delete(patientId);
+            return result.ErrorType switch
+            {
+                ServiceErrorType.Success => Ok(),
+                ServiceErrorType.NotFound => NotFound(result.Message),
+                ServiceErrorType.DatabaseError => StatusCode(StatusCodes.Status503ServiceUnavailable,
+                result.Message),
+                _ => StatusCode(StatusCodes.Status500InternalServerError,
+                result.Message)
+            };
+        }
+
+
     }
 }
