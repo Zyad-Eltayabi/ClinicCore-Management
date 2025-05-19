@@ -44,7 +44,7 @@ public class DoctorService : IDoctorService
         throw new NotImplementedException();
     }
 
-    public async Task<Result<DoctorDto>> Add(DoctorDto doctorDto)
+    private async Task<Result<DoctorDto>> ValidateNewDoctor(DoctorDto doctorDto)
     {
         var validations = ValidateDoctor(doctorDto);
         if (!validations.IsValid)
@@ -54,12 +54,20 @@ public class DoctorService : IDoctorService
         var isEmailExists = await _unitOfWork.Doctors.ExistsAsync(d => d.Email == doctorDto.Email);
         if (isEmailExists)
             return Result<DoctorDto>.Failure("Email already exists", ServiceErrorType.ValidationError);
-
+        
+        return Result<DoctorDto>.Success();
+    }
+    public async Task<Result<DoctorDto>> Add(DoctorDto doctorDto)
+    {
+        var validateNewDoctor = await ValidateNewDoctor(doctorDto);
+        if(!validateNewDoctor.IsSuccess)
+            return validateNewDoctor;
+        
         var doctor = _mapper.Map<Doctor>(doctorDto);
         await _unitOfWork.Doctors.Add(doctor);
-        var result = await _unitOfWork.SaveChanges();
+        var saved = await _unitOfWork.SaveChanges();
 
-        return result
+        return saved
             ? Result<DoctorDto>.Success(_mapper.Map<DoctorDto>(doctor))
             : Result<DoctorDto>.Failure("Failed to add new doctor in database", ServiceErrorType.DatabaseError);
     }
