@@ -15,6 +15,7 @@ namespace DomainLayer.Interfaces.Repositories
         void Update(T entity);
         void Delete(T entity);
         Task<IEnumerable<T>> GetAll();
+        Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
         public Task<bool> Delete(Expression<Func<T, bool>> predicate);
     }
 }
