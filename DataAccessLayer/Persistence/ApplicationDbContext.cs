@@ -15,7 +15,7 @@ namespace DataAccessLayer.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            TablesConfigurations.ConfigurePatients(modelBuilder.Entity<Patient>());
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
         }
 
         public DbSet<Patient> Patients { get; set; }

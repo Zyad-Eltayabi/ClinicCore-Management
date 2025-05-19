@@ -9,13 +9,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DataAccessLayer.Persistence.Configurations
 {
-    public class TablesConfigurations
+    public class PatientConfiguration : IEntityTypeConfiguration<Patient>
     {
-        public static void ConfigurePatients(EntityTypeBuilder<Patient> modelBuilder)
+        public void Configure(EntityTypeBuilder<Patient> modelBuilder)
         {
-
             modelBuilder.Property(p => p.FullName)
-                   .HasMaxLength(150);
+                .HasMaxLength(150);
 
             modelBuilder.Property(p => p.PhoneNumber)
                 .HasMaxLength(50);
