@@ -4,6 +4,7 @@ using ClinicAPI.Middlewares;
 using DataAccessLayer.Persistence;
 using DataAccessLayer.UnitOfWork;
 using DomainLayer.Interfaces;
+using DomainLayer.Interfaces.Services;
 using DomainLayer.Interfaces.ServicesInterfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +23,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 builder.Services.AddScoped<IPatientService, PatientService>();
+builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddExceptionHandler<GlobalErrorHandling>();

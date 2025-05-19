@@ -14,6 +14,7 @@ namespace BusinessLayer.Mapping
         public MappingProfile()
         {
             CreateMap<PatientDto, Patient>().ReverseMap();
+            CreateMap<DoctorDto, Doctor>().ReverseMap();
         }
     }
 }

@@ -10,7 +10,9 @@ namespace DomainLayer.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
-         IGenericRepository<Patient> Patients { get; }
+        IGenericRepository<Patient> Patients { get; }
+        IGenericRepository<Doctor> Doctors { get; }
+
 
         Task<bool> SaveChanges();
     }

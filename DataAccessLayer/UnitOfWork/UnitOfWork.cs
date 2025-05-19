@@ -11,11 +11,13 @@ namespace DataAccessLayer.UnitOfWork
         private readonly ApplicationDbContext _context;
 
         public IGenericRepository<Patient> Patients { get; }
+        public IGenericRepository<Doctor> Doctors { get; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
             Patients = new GenericRepository<Patient>(_context);
+            Doctors = new GenericRepository<Doctor>(_context);
         }
         public async Task<bool> SaveChanges()
         {
