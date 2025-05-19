@@ -8,6 +8,8 @@ public class DoctorConfiguration : IEntityTypeConfiguration<Doctor>
 {
     public void Configure(EntityTypeBuilder<Doctor> builder)
     {
+        builder.ToTable("Doctors");
+        
         builder.Property(d => d.FullName)
             .HasMaxLength(100);
         
