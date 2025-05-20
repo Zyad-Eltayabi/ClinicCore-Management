@@ -32,4 +32,22 @@ public class DoctorController : Controller
             _ => StatusCode(500, "An error occurred while processing your request.")
         };
     }
+    
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<DoctorDto>> Update(DoctorDto doctorDto)
+    {
+        var result = await _doctorService.Update(doctorDto);
+        return result.ErrorType switch
+        {
+            ServiceErrorType.Success => NoContent(),
+            ServiceErrorType.ValidationError => BadRequest(result.Message),
+            ServiceErrorType.NotFound => NotFound(result.Message),
+            ServiceErrorType.DatabaseError => StatusCode(503, result.Message),
+            _ => StatusCode(500, "An error occurred while processing your request.")
+        };
+    }
 }

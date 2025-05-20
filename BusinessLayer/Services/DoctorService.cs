@@ -72,9 +72,24 @@ public class DoctorService : IDoctorService
             : Result<DoctorDto>.Failure("Failed to add new doctor in database", ServiceErrorType.DatabaseError);
     }
 
-    public Task<Result<DoctorDto>> Update(DoctorDto patient)
+    public async Task<Result<DoctorDto>> Update(DoctorDto doctor)
     {
-        throw new NotImplementedException();
+        // validate doctorDto object
+        var validations = ValidateDoctor(doctor);
+        if (!validations.IsValid)
+            return Result<DoctorDto>.Failure(validations.ErrorMessage, ServiceErrorType.ValidationError);
+        
+        // map doctorDto to doctor object
+        var updatedDoctor = await _unitOfWork.Doctors.GetById(doctor.Id);
+        if (updatedDoctor is null)
+            return Result<DoctorDto>.Failure("Doctor is not found to update", ServiceErrorType.NotFound);
+        
+        _mapper.Map(doctor, updatedDoctor);
+        var result = await _unitOfWork.SaveChanges();
+        
+        return result ?
+            Result<DoctorDto>.Success()
+            : Result<DoctorDto>.Failure("Failed to update the doctor", ServiceErrorType.DatabaseError);
     }
 
     public Task<Result<DoctorDto>> Delete(int id)

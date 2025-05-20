@@ -19,7 +19,7 @@ namespace ClinicAPI.Middlewares
             Exception exception,
             CancellationToken cancellationToken)
         {
-            _logger.LogError(exception, exception.Message);
+            _logger.LogCritical(exception, exception.Message);
 
             var details = new ProblemDetails()
             {
