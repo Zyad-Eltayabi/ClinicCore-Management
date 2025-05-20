@@ -43,7 +43,7 @@ namespace DataAccessLayer.Repositories
 
         public async Task<T> GetById(int id)
         {
-            var item = await _entity.FindAsync(id);
+            var item = await _entity.FindAsync(id); 
             return item;
         }
 

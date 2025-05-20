@@ -39,9 +39,16 @@ public class DoctorService : IDoctorService
         throw new NotImplementedException();
     }
 
-    public Task<Result<DoctorDto>> GetById(int id)
+    public async Task<Result<DoctorDto>> GetById(int id)
     {
-        throw new NotImplementedException();
+        var doctor = await _unitOfWork.Doctors.GetById(id);
+
+        if(doctor is null)  
+            return Result<DoctorDto>.Failure("Invalid doctor id, the doctor with this id is not found",
+             ServiceErrorType.NotFound);
+            
+        var doctorDto =  _mapper.Map<DoctorDto>(doctor);
+        return Result<DoctorDto>.Success(doctorDto); 
     }
 
     private async Task<Result<DoctorDto>> ValidateNewDoctor(DoctorDto doctorDto)
