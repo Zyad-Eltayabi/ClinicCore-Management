@@ -30,6 +30,11 @@ namespace DataAccessLayer.Persistence.Configurations
               .WithOne(a => a.Appointment)
               .HasForeignKey<Appointment>(a => a.MedicalRecordID);
 
+            // configure relation between appointment and payment
+            builder.HasOne<Payment>(a => a.Payment)
+              .WithOne(p => p.Appointment)
+              .HasForeignKey<Appointment>(a => a.PaymentID);
+
         }
     }
 }

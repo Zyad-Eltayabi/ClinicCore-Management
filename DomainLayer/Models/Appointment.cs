@@ -20,5 +20,8 @@ namespace DomainLayer.Models
 
         public int MedicalRecordID { get; set; }
         public MedicalRecord MedicalRecord { get; set; }
+
+        public int? PaymentID { get; set; }
+        public Payment Payment { get; set; }
     }
 }
