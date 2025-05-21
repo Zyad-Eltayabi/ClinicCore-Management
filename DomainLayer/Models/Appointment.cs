@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DomainLayer.Models
+{
+    public class Appointment
+    {
+        public int AppointmentID { get; set; }
+        public DateTime AppointmentDateTime { get; set; }
+        public short AppointmentStatus { get; set; }
+
+        public int PatientID { get; set; }
+        public Patient Patient { get; set; }
+    }
+}

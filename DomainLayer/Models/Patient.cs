@@ -9,5 +9,6 @@ namespace DomainLayer.Models
     public class Patient : Person 
     {
         public DateTime DateOfRegistration { get; set; }
+        public ICollection<Appointment> Appointments { get; set; }
     }
 }
