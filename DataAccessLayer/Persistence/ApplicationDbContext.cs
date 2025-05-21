@@ -11,8 +11,6 @@ namespace DataAccessLayer.Persistence
 
         }
 
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
@@ -20,6 +18,7 @@ namespace DataAccessLayer.Persistence
 
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Doctor> Doctors { get; set; }
+        public DbSet<Prescription> Prescriptions { get; set; }
     }
 
 }
