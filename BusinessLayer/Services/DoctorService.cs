@@ -34,11 +34,19 @@ public class DoctorService : IDoctorService
     }
 
 
-    public Task<IEnumerable<DoctorDto>> GetAll()
+    public async Task<Result<IEnumerable<DoctorDto>>> GetAll()
     {
-        throw new NotImplementedException();
-    }
+        var doctors = await _unitOfWork.Doctors.GetAll();
+        if (doctors != null)
+        {
+            var doctorsDto = _mapper.Map<IEnumerable<DoctorDto>>(doctors);
+            return Result<IEnumerable<DoctorDto>>.Success(doctorsDto);
+        }
 
+        return Result<IEnumerable<DoctorDto>>
+            .Failure("There are no doctors found", ServiceErrorType.NotFound);
+    }
+    
     public async Task<Result<DoctorDto>> GetById(int id)
     {
         var doctor = await _unitOfWork.Doctors.GetById(id);

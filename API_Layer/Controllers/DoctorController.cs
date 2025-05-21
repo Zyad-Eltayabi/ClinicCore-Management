@@ -51,13 +51,28 @@ public class DoctorController : Controller
         };
     }
 
-    [HttpGet,Route("{id}")] 
+    [HttpGet, Route("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<DoctorDto>> GetById(int id)
     {
         var result = await _doctorService.GetById(id);
+        return result.ErrorType switch
+        {
+            ServiceErrorType.Success => Ok(result.Data),
+            ServiceErrorType.NotFound => NotFound(result.Message),
+            _ => StatusCode(500, "An error occurred while processing your request.")
+        };
+    }
+
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<DoctorDto>> GetAll()
+    {
+        var result = await _doctorService.GetAll();
         return result.ErrorType switch
         {
             ServiceErrorType.Success => Ok(result.Data),
