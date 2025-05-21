@@ -15,5 +15,8 @@ namespace DomainLayer.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string? SpecialInstructions { get; set; }
+
+        public MedicalRecord MedicalRecord { get; set; }
+        public int MedicalRecordId { get; set; }
     }
 }

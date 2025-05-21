@@ -23,6 +23,11 @@ namespace DataAccessLayer.Persistence.Configurations
 
             builder.Property(p => p.SpecialInstructions)
               .HasMaxLength(200);
+
+            builder
+                .HasOne<MedicalRecord>(p => p.MedicalRecord)
+                .WithOne(m => m.Prescription)
+                .HasForeignKey<Prescription>(p => p.MedicalRecordId);
         }
     }
 }
