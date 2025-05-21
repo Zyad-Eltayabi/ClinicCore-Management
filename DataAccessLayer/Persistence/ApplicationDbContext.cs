@@ -20,6 +20,7 @@ namespace DataAccessLayer.Persistence
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<Prescription> Prescriptions { get; set; }
         public DbSet<MedicalRecord> MedicalRecords { get; set; }
+        public DbSet<Payment> Payments { get; set; }
     }
 
 }
