@@ -14,5 +14,8 @@ namespace DomainLayer.Models
 
         public int PatientID { get; set; }
         public Patient Patient { get; set; }
+
+        public int DoctorID { get; set; }
+        public Doctor Doctor { get; set; }
     }
 }
