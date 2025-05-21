@@ -46,17 +46,17 @@ public class DoctorService : IDoctorService
         return Result<IEnumerable<DoctorDto>>
             .Failure("There are no doctors found", ServiceErrorType.NotFound);
     }
-    
+
     public async Task<Result<DoctorDto>> GetById(int id)
     {
         var doctor = await _unitOfWork.Doctors.GetById(id);
 
-        if(doctor is null)  
+        if (doctor is null)
             return Result<DoctorDto>.Failure("Invalid doctor id, the doctor with this id is not found",
              ServiceErrorType.NotFound);
-            
-        var doctorDto =  _mapper.Map<DoctorDto>(doctor);
-        return Result<DoctorDto>.Success(doctorDto); 
+
+        var doctorDto = _mapper.Map<DoctorDto>(doctor);
+        return Result<DoctorDto>.Success(doctorDto);
     }
 
     private async Task<Result<DoctorDto>> ValidateNewDoctor(DoctorDto doctorDto)
@@ -69,15 +69,16 @@ public class DoctorService : IDoctorService
         var isEmailExists = await _unitOfWork.Doctors.ExistsAsync(d => d.Email == doctorDto.Email);
         if (isEmailExists)
             return Result<DoctorDto>.Failure("Email already exists", ServiceErrorType.ValidationError);
-        
+
         return Result<DoctorDto>.Success();
     }
+
     public async Task<Result<DoctorDto>> Add(DoctorDto doctorDto)
     {
         var validateNewDoctor = await ValidateNewDoctor(doctorDto);
-        if(!validateNewDoctor.IsSuccess)
+        if (!validateNewDoctor.IsSuccess)
             return validateNewDoctor;
-        
+
         var doctor = _mapper.Map<Doctor>(doctorDto);
         await _unitOfWork.Doctors.Add(doctor);
         var saved = await _unitOfWork.SaveChanges();
@@ -93,22 +94,29 @@ public class DoctorService : IDoctorService
         var validations = ValidateDoctor(doctor);
         if (!validations.IsValid)
             return Result<DoctorDto>.Failure(validations.ErrorMessage, ServiceErrorType.ValidationError);
-        
+
         // map doctorDto to doctor object
         var updatedDoctor = await _unitOfWork.Doctors.GetById(doctor.Id);
         if (updatedDoctor is null)
             return Result<DoctorDto>.Failure("Doctor is not found to update", ServiceErrorType.NotFound);
-        
+
         _mapper.Map(doctor, updatedDoctor);
         var result = await _unitOfWork.SaveChanges();
-        
+
         return result ?
             Result<DoctorDto>.Success()
             : Result<DoctorDto>.Failure("Failed to update the doctor", ServiceErrorType.DatabaseError);
     }
 
-    public Task<Result<DoctorDto>> Delete(int id)
+    public async Task<Result<DoctorDto>> Delete(int id)
     {
-        throw new NotImplementedException();
+        var doctor = await _unitOfWork.Doctors.GetById(id);
+        if (doctor is null)
+            return Result<DoctorDto>.Failure($"There is no doctor with id = {id}", ServiceErrorType.NotFound);
+        _unitOfWork.Doctors.Delete(doctor);
+        var deleted = await _unitOfWork.SaveChanges();
+        return deleted ?
+            Result<DoctorDto>.Success()
+            : Result<DoctorDto>.Failure("Some error occurred during deleting in database.", ServiceErrorType.DatabaseError);
     }
 }

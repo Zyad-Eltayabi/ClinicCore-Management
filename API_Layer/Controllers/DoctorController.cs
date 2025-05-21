@@ -80,4 +80,21 @@ public class DoctorController : Controller
             _ => StatusCode(500, "An error occurred while processing your request.")
         };
     }
+
+    [HttpDelete, Route("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Delete([FromRoute] int id)
+    {
+        var result =await _doctorService.Delete(id);
+        return result.ErrorType switch
+        {
+            ServiceErrorType.Success => Ok(),
+            ServiceErrorType.NotFound => NotFound(result.Message),
+            ServiceErrorType.DatabaseError => StatusCode(503, result.Message),
+            _ => StatusCode(500, "An error occurred while processing your request.")
+        };
+    }
 }
