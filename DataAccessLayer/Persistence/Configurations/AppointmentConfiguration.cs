@@ -25,6 +25,11 @@ namespace DataAccessLayer.Persistence.Configurations
               .WithMany(d => d.Appointments)
               .HasForeignKey(a => a.DoctorID);
 
+            // configure relation between appointment and medical record
+            builder.HasOne<MedicalRecord>(a => a.MedicalRecord)
+              .WithOne(a => a.Appointment)
+              .HasForeignKey<Appointment>(a => a.MedicalRecordID);
+
         }
     }
 }

@@ -13,5 +13,6 @@ namespace DomainLayer.Models
         public string? Diagnosis { get; set; }
         public string? AdditionalNotes { get; set; }
         public Prescription Prescription { get; set; }
+        public Appointment Appointment { get; set; }
     }
 }
