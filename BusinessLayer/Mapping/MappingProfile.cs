@@ -15,6 +15,8 @@ namespace BusinessLayer.Mapping
         {
             CreateMap<PatientDto, Patient>().ReverseMap();
             CreateMap<DoctorDto, Doctor>().ReverseMap();
+            CreateMap<Appointment, AppointmentDto>().ReverseMap();
+            CreateMap<MedicalRecord, MedicalRecordDto>().ReverseMap();
         }
     }
 }
