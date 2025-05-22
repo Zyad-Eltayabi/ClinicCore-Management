@@ -25,6 +25,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddExceptionHandler<GlobalErrorHandling>();
 builder.Services.AddProblemDetails();
