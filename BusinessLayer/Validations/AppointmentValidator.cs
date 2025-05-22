@@ -32,8 +32,8 @@ public class AppointmentValidator : AbstractValidator<AppointmentDto>
 
         RuleFor(a => a.MedicalRecordID)
             .GreaterThan(0)
-            .When(a => a.MedicalRecordID.HasValue)
-            .WithMessage("Medical Record ID must be greater than 0 when specified.");
+            .When(a => a.MedicalRecordID != 0)
+            .WithMessage("Medical Record ID must be greater than 0 when specified vv.");
 
         When(a => a.MedicalRecordDto != null, () =>
         {
