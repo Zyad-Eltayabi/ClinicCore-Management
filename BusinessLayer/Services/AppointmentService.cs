@@ -143,4 +143,39 @@ public class AppointmentService : IAppointmentService
             : Result<RescheduleAppointmentDto>.Failure("Failed to update the appointment",
                 ServiceErrorType.DatabaseError);
     }
+
+
+    private ValidationsResult ValidateCancelRequest(Appointment appointment)
+    {
+        if (appointment is null)
+            return new ValidationsResult(false,
+                "Invalid appointment id, the appointment with this id is not found");
+
+        // check the current appointment status
+        if (appointment.AppointmentStatus == (int)AppointmentStatus.Completed)
+            return new ValidationsResult(false,
+                "The appointment is already completed, it cannot be canceled");
+        
+        return new ValidationsResult(true);
+    }
+    public async Task<Result<AppointmentDto>> Cancel(int appointmentId)
+    {
+        // check if appointment exists
+        var appointment = await _unitOfWork.Appointments.GetById(appointmentId);
+        
+        var validationResult = ValidateCancelRequest(appointment);
+        if (!validationResult.IsValid)
+            return Result<AppointmentDto>.Failure(validationResult.ErrorMessage,ServiceErrorType.ValidationError);
+        
+        // update appointment status
+        appointment.AppointmentStatus = (int)AppointmentStatus.Canceled;
+        _unitOfWork.Appointments.Update(appointment);
+        var result = await _unitOfWork.SaveChanges();
+        
+        return result
+            ? Result<AppointmentDto>.Success()
+            : Result<AppointmentDto>.Failure("Failed to update the appointment",
+                ServiceErrorType.DatabaseError);
+           
+    }
 }
