@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 PresentationLayer/
+A1-TestDTO.cs

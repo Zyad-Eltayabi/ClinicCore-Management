@@ -7,6 +7,8 @@ using DomainLayer.Interfaces;
 using DomainLayer.Interfaces.Services;
 using DomainLayer.Interfaces.ServicesInterfaces;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,11 @@ builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddExceptionHandler<GlobalErrorHandling>();
 builder.Services.AddProblemDetails();
+
+
+
+
+
 
 
 var app = builder.Build();

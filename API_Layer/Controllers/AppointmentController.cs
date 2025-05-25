@@ -1,6 +1,9 @@
+using System.ComponentModel.DataAnnotations;
+using BusinessLayer.Validations;
 using DomainLayer.DTOs;
 using DomainLayer.Helpers;
 using DomainLayer.Interfaces.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -61,7 +64,7 @@ public class AppointmentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> CancelAppointment([FromRoute]int appointmentId)
+    public async Task<IActionResult> CancelAppointment([FromRoute] int appointmentId)
     {
         var result = await _appointmentService.Cancel(appointmentId);
         return result.ErrorType switch
@@ -74,4 +77,5 @@ public class AppointmentController : ControllerBase
             _ => StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred")*/
         };
     }
+
 }
