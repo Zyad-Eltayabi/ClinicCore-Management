@@ -1,15 +1,10 @@
 using DomainLayer.DTOs;
 using FluentValidation;
 namespace BusinessLayer.Validations;
-public class PaymentValidator : AbstractValidator<PaymentDto>
+public class CompletePaymentValidator : AbstractValidator<CompletePaymentDto>
 {
-    public PaymentValidator()
+    public CompletePaymentValidator()
     {
-        RuleFor(p => p.PaymentID)
-            .GreaterThan(0)
-            .When(p => p.PaymentID != 0)
-            .WithMessage("Payment ID must be greater than 0.");
-
         RuleFor(p => p.PaymentDate)
             .NotEmpty()
             .WithMessage("Payment date is required.")
