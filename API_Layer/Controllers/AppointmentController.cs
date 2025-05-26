@@ -94,6 +94,7 @@ public class AppointmentController : ControllerBase
         };
     }
     
+    [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
@@ -105,6 +106,20 @@ public class AppointmentController : ControllerBase
         {
             ServiceErrorType.Success => Ok(appointments.Data),
             _ => StatusCode((int)appointments.ErrorType, appointments.Message)
+        };
+    }
+    
+    [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<AppointmentDto>> GetById([FromRoute] int id)
+    {
+        var result = await _appointmentService.GetById(id);
+        return result.ErrorType switch
+        {
+            ServiceErrorType.Success => Ok(result.Data),
+            _ => StatusCode((int)result.ErrorType, result.Message)
         };
     }
 }

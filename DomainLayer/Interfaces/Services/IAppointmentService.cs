@@ -13,4 +13,6 @@ public interface IAppointmentService
     Task<Result<CompleteAppointmentDto>> Complete(CompleteAppointmentDto completeAppointmentDto);
 
     Task<Result<IEnumerable<AppointmentDto>>> GetAll();
+    
+    Task<Result<AppointmentDto>> GetById(int id);
 }

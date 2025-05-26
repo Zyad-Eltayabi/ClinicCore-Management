@@ -266,4 +266,19 @@ public class AppointmentService : IAppointmentService
         }
         return Result<IEnumerable<AppointmentDto>>.Success(appointmentsDtos);
     }
+
+    public async Task<Result<AppointmentDto>> GetById(int id)
+    {
+        var appointment = await _unitOfWork.Appointments.GetById(id);
+        if (appointment is null)
+            return Result<AppointmentDto>.Failure("Appointment not found", ServiceErrorType.NotFound);
+    
+        var appointmentDto = _mapper.Map<AppointmentDto>(appointment);
+        var medicalRecord = await _unitOfWork.MedicalRecords.GetById((int)appointmentDto.MedicalRecordID);
+        
+        if (medicalRecord is not null)
+            appointmentDto.MedicalRecordDto = _mapper.Map<MedicalRecordDto>(medicalRecord);
+        
+        return Result<AppointmentDto>.Success(appointmentDto);
+    }
 }
