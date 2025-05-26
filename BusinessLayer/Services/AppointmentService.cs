@@ -213,6 +213,7 @@ public class AppointmentService : IAppointmentService
         await _unitOfWork.SaveChanges();
         return payment.PaymentID;
     }
+
     public async Task<Result<CompleteAppointmentDto>> Complete(CompleteAppointmentDto completeAppointmentDto)
     {
         // validate completeAppointmentDto object
@@ -240,9 +241,29 @@ public class AppointmentService : IAppointmentService
         catch (Exception e)
         {
             _logger.LogError(e, "Failed to complete appointment {AppointmentId}",
-                completeAppointmentDto.AppointmentID,ConsoleColor.DarkRed);
+                completeAppointmentDto.AppointmentID, ConsoleColor.DarkRed);
             await _unitOfWork.Rollback();
-            return Result<CompleteAppointmentDto>.Failure("Failed to complete the appointment", ServiceErrorType.DatabaseError);
+            return Result<CompleteAppointmentDto>.Failure("Failed to complete the appointment",
+                ServiceErrorType.DatabaseError);
         }
+    }
+
+    public async Task<Result<IEnumerable<AppointmentDto>>> GetAll()
+    {
+        var appointments = await _unitOfWork.Appointments.GetAll();
+
+        if (appointments is null)
+            return Result<IEnumerable<AppointmentDto>>.Failure("There were no appointments found",
+                ServiceErrorType.NotFound);
+
+        var appointmentsDtos = _mapper.Map<IEnumerable<AppointmentDto>>(appointments);
+        
+        // map medical medical record dto in each appointmentsDtos items  
+        foreach (var item in appointmentsDtos)
+        {
+            var medicalRecord = await _unitOfWork.MedicalRecords.GetById((int)item.MedicalRecordID);
+            item.MedicalRecordDto = _mapper.Map<MedicalRecordDto>(medicalRecord);
+        }
+        return Result<IEnumerable<AppointmentDto>>.Success(appointmentsDtos);
     }
 }

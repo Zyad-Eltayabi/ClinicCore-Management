@@ -93,5 +93,18 @@ public class AppointmentController : ControllerBase
             _ => StatusCode((int)result.ErrorType, result.Message)
         };
     }
-
+    
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<IEnumerable<AppointmentDto>>> Get()
+    {
+        var appointments = await _appointmentService.GetAll();
+        return appointments.ErrorType switch
+        {
+            ServiceErrorType.Success => Ok(appointments.Data),
+            _ => StatusCode((int)appointments.ErrorType, appointments.Message)
+        };
+    }
 }

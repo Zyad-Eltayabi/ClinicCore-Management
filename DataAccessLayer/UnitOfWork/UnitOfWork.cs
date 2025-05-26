@@ -15,6 +15,7 @@ namespace DataAccessLayer.UnitOfWork
         public IGenericRepository<Doctor> Doctors { get; }
         public IGenericRepository<Prescription> Prescriptions { get; }
         public IGenericRepository<Payment> Payments { get; }
+        public IGenericRepository<MedicalRecord> MedicalRecords { get; }
 
         public IGenericRepository<Appointment> Appointments { get; }
 
@@ -26,6 +27,7 @@ namespace DataAccessLayer.UnitOfWork
             Appointments = new GenericRepository<Appointment>(_context);
             Prescriptions = new GenericRepository<Prescription>(_context);
             Payments = new GenericRepository<Payment>(_context);
+            MedicalRecords = new GenericRepository<MedicalRecord>(_context);
         }
         public async Task<bool> SaveChanges()
         {

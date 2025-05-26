@@ -11,4 +11,6 @@ public interface IAppointmentService
     Task<Result<AppointmentDto>> Cancel(int appointmentId);
     
     Task<Result<CompleteAppointmentDto>> Complete(CompleteAppointmentDto completeAppointmentDto);
+
+    Task<Result<IEnumerable<AppointmentDto>>> GetAll();
 }

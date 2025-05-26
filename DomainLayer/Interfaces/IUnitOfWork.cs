@@ -15,6 +15,8 @@ namespace DomainLayer.Interfaces
         IGenericRepository<Prescription> Prescriptions { get; }
         IGenericRepository<Payment> Payments { get; }
         
+        IGenericRepository<MedicalRecord> MedicalRecords { get; }
+        
         IGenericRepository<Appointment> Appointments { get; }
 
         Task<bool> SaveChanges();
