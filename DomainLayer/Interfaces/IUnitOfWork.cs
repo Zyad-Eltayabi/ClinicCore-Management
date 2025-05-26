@@ -16,5 +16,12 @@ namespace DomainLayer.Interfaces
         IGenericRepository<Appointment> Appointments { get; }
 
         Task<bool> SaveChanges();
+        
+        //Start the database Transaction
+        Task CreateTransaction();
+        //Commit the database Transaction
+        Task Commit();
+        //Rollback the database Transaction
+        Task Rollback();
     }
 }

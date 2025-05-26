@@ -3,13 +3,14 @@ using DataAccessLayer.Repositories;
 using DomainLayer.Interfaces;
 using DomainLayer.Interfaces.Repositories;
 using DomainLayer.Models;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DataAccessLayer.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
-
+        private IDbContextTransaction _transaction;
         public IGenericRepository<Patient> Patients { get; }
         public IGenericRepository<Doctor> Doctors { get; }
         
@@ -26,6 +27,21 @@ namespace DataAccessLayer.UnitOfWork
         {
             int affectedRows = await _context.SaveChangesAsync();
             return affectedRows > 0;
+        }
+
+        public async Task CreateTransaction()
+        {
+            _transaction = await _context.Database.BeginTransactionAsync();
+        }
+
+        public async Task Commit()
+        {
+           await _transaction.CommitAsync();
+        }
+
+        public async Task Rollback()
+        {
+           await _transaction.RollbackAsync();
         }
 
 
