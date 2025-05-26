@@ -13,7 +13,9 @@ namespace DataAccessLayer.UnitOfWork
         private IDbContextTransaction _transaction;
         public IGenericRepository<Patient> Patients { get; }
         public IGenericRepository<Doctor> Doctors { get; }
-        
+        public IGenericRepository<Prescription> Prescriptions { get; }
+        public IGenericRepository<Payment> Payments { get; }
+
         public IGenericRepository<Appointment> Appointments { get; }
 
         public UnitOfWork(ApplicationDbContext context)
@@ -22,6 +24,8 @@ namespace DataAccessLayer.UnitOfWork
             Patients = new GenericRepository<Patient>(_context);
             Doctors = new GenericRepository<Doctor>(_context);
             Appointments = new GenericRepository<Appointment>(_context);
+            Prescriptions = new GenericRepository<Prescription>(_context);
+            Payments = new GenericRepository<Payment>(_context);
         }
         public async Task<bool> SaveChanges()
         {

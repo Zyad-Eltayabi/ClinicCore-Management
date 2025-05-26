@@ -77,5 +77,21 @@ public class AppointmentController : ControllerBase
             _ => StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred")*/
         };
     }
+    
+    [HttpPut, Route("complete-appointment")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> CompleteAppointment(CompleteAppointmentDto completeAppointment)
+    {
+        var result = await _appointmentService.Complete(completeAppointment);
+        return result.ErrorType switch
+        {
+            ServiceErrorType.Success => Ok(),
+            _ => StatusCode((int)result.ErrorType, result.Message)
+        };
+    }
 
 }

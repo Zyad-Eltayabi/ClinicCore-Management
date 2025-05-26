@@ -12,6 +12,8 @@ namespace DomainLayer.Interfaces
     {
         IGenericRepository<Patient> Patients { get; }
         IGenericRepository<Doctor> Doctors { get; }
+        IGenericRepository<Prescription> Prescriptions { get; }
+        IGenericRepository<Payment> Payments { get; }
         
         IGenericRepository<Appointment> Appointments { get; }
 

@@ -6,6 +6,7 @@ using DomainLayer.Helpers;
 using DomainLayer.Interfaces;
 using DomainLayer.Interfaces.Services;
 using DomainLayer.Models;
+using Microsoft.Extensions.Logging;
 
 namespace BusinessLayer.Services;
 
@@ -13,11 +14,13 @@ public class AppointmentService : IAppointmentService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private ILogger<AppointmentService> _logger;
 
-    public AppointmentService(IUnitOfWork unitOfWork, IMapper mapper)
+    public AppointmentService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<AppointmentService> logger)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _logger = logger;
     }
 
     private ValidationsResult ValidateAppointment(AppointmentDto appointmentDto)
@@ -155,27 +158,91 @@ public class AppointmentService : IAppointmentService
         if (appointment.AppointmentStatus == (int)AppointmentStatus.Completed)
             return new ValidationsResult(false,
                 "The appointment is already completed, it cannot be canceled");
-        
+
         return new ValidationsResult(true);
     }
+
     public async Task<Result<AppointmentDto>> Cancel(int appointmentId)
     {
         // check if appointment exists
         var appointment = await _unitOfWork.Appointments.GetById(appointmentId);
-        
+
         var validationResult = ValidateCancelRequest(appointment);
         if (!validationResult.IsValid)
-            return Result<AppointmentDto>.Failure(validationResult.ErrorMessage,ServiceErrorType.ValidationError);
-        
+            return Result<AppointmentDto>.Failure(validationResult.ErrorMessage, ServiceErrorType.ValidationError);
+
         // update appointment status
         appointment.AppointmentStatus = (int)AppointmentStatus.Canceled;
         _unitOfWork.Appointments.Update(appointment);
         var result = await _unitOfWork.SaveChanges();
-        
+
         return result
             ? Result<AppointmentDto>.Success()
             : Result<AppointmentDto>.Failure("Failed to update the appointment",
                 ServiceErrorType.DatabaseError);
-           
+    }
+
+
+    private async Task<ValidationsResult> ValidateCompleteRequest(CompleteAppointmentDto completeAppointmentDto)
+    {
+        var completeAppointmentValidator = new CompleteAppointmentValidator(_unitOfWork);
+        var validations = await completeAppointmentValidator.ValidateAsync(completeAppointmentDto);
+        if (!validations.IsValid)
+        {
+            string message = string.Join("; ", validations.Errors.Select(e => e.ErrorMessage));
+            return new ValidationsResult(false, message);
+        }
+
+        return new ValidationsResult(true);
+    }
+
+    private async Task SaveNewPrescription(CompletePrescriptionDto prescriptionDto, int medicalRecordId)
+    {
+        // map prescriptionDto with a Prescription model
+        var prescription = _mapper.Map<Prescription>(prescriptionDto);
+        prescription.MedicalRecordId = medicalRecordId;
+        await _unitOfWork.Prescriptions.Add(prescription);
+        await _unitOfWork.SaveChanges();
+    }
+
+    private async Task<int> SaveNewPayment(CompletePaymentDto paymentDto)
+    {
+        // map paymentDto with a Payment model
+        var payment = _mapper.Map<Payment>(paymentDto);
+        await _unitOfWork.Payments.Add(payment);
+        await _unitOfWork.SaveChanges();
+        return payment.PaymentID;
+    }
+    public async Task<Result<CompleteAppointmentDto>> Complete(CompleteAppointmentDto completeAppointmentDto)
+    {
+        // validate completeAppointmentDto object
+        var validations = await ValidateCompleteRequest(completeAppointmentDto);
+        if (!validations.IsValid)
+            return Result<CompleteAppointmentDto>.Failure(validations.ErrorMessage, ServiceErrorType.ValidationError);
+
+        // get appointment
+        var appointment = await _unitOfWork.Appointments.GetById(completeAppointmentDto.AppointmentID);
+        try
+        {
+            await _unitOfWork.CreateTransaction();
+            // save new prescription
+            await SaveNewPrescription(completeAppointmentDto.CompletePrescriptionDto, appointment.MedicalRecordID);
+            // save new payment and get new payment Id
+            var paymentId = await SaveNewPayment(completeAppointmentDto.CompletePaymentDto);
+            // update appointment status
+            appointment.AppointmentStatus = (int)AppointmentStatus.Completed;
+            appointment.PaymentID = paymentId;
+            _unitOfWork.Appointments.Update(appointment);
+            var result = await _unitOfWork.SaveChanges();
+            await _unitOfWork.Commit();
+            return Result<CompleteAppointmentDto>.Success();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Failed to complete appointment {AppointmentId}",
+                completeAppointmentDto.AppointmentID,ConsoleColor.DarkRed);
+            await _unitOfWork.Rollback();
+            return Result<CompleteAppointmentDto>.Failure("Failed to complete the appointment", ServiceErrorType.DatabaseError);
+        }
     }
 }

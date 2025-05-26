@@ -9,4 +9,6 @@ public interface IAppointmentService
     Task<Result<RescheduleAppointmentDto>> Reschedule(RescheduleAppointmentDto rescheduleAppointmentDto);
     
     Task<Result<AppointmentDto>> Cancel(int appointmentId);
+    
+    Task<Result<CompleteAppointmentDto>> Complete(CompleteAppointmentDto completeAppointmentDto);
 }
