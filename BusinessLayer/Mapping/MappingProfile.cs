@@ -19,6 +19,7 @@ namespace BusinessLayer.Mapping
             CreateMap<CompletePrescriptionDto, Prescription>().ReverseMap();
             CreateMap<CompletePaymentDto, Payment>().ReverseMap();
             CreateMap<MedicalRecordDto, MedicalRecord>().ReverseMap();
+            CreateMap<CreateOrUpdatePrescriptionDto, Prescription>().ReverseMap();
         }
     }
 }
