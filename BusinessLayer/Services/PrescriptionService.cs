@@ -12,6 +12,7 @@ public class PrescriptionService : IPrescriptionService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+
     public PrescriptionService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
@@ -45,19 +46,34 @@ public class PrescriptionService : IPrescriptionService
     {
         var validations = await ValidatePrescriptionDto(prescriptionDto);
         if (!validations.IsValid)
-            return Result<CreateOrUpdatePrescriptionDto>.Failure(validations.ErrorMessage, ServiceErrorType.ValidationError);
-    
+            return Result<CreateOrUpdatePrescriptionDto>.Failure(validations.ErrorMessage,
+                ServiceErrorType.ValidationError);
+
         var prescription = _mapper.Map<Prescription>(prescriptionDto);
         await _unitOfWork.Prescriptions.Add(prescription);
         await _unitOfWork.SaveChanges();
-    
+
         var createdPrescription = _mapper.Map<CreateOrUpdatePrescriptionDto>(prescription);
         return Result<CreateOrUpdatePrescriptionDto>.Success(createdPrescription);
     }
 
-    public Task<Result<CreateOrUpdatePrescriptionDto>> Update(CreateOrUpdatePrescriptionDto prescriptionDto)
+    public async Task<Result<CreateOrUpdatePrescriptionDto>> Update(CreateOrUpdatePrescriptionDto prescriptionDto)
     {
-        throw new NotImplementedException();
+        var validations = await ValidatePrescriptionDto(prescriptionDto);
+        if (!validations.IsValid)
+            return Result<CreateOrUpdatePrescriptionDto>.Failure(validations.ErrorMessage,
+                ServiceErrorType.ValidationError);
+
+        var existingPrescription = await _unitOfWork.Prescriptions.GetById(prescriptionDto.PrescriptionID);
+        if (existingPrescription == null)
+            return Result<CreateOrUpdatePrescriptionDto>.Failure("Prescription not found", ServiceErrorType.NotFound);
+
+        _mapper.Map(prescriptionDto, existingPrescription);
+        _unitOfWork.Prescriptions.Update(existingPrescription);
+        await _unitOfWork.SaveChanges();
+
+        var updatedPrescription = _mapper.Map<CreateOrUpdatePrescriptionDto>(existingPrescription);
+        return Result<CreateOrUpdatePrescriptionDto>.Success(updatedPrescription);
     }
 
     public Task<Result<CreateOrUpdatePrescriptionDto>> Delete(int id)
