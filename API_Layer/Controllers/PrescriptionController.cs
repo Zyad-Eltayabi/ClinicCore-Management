@@ -79,4 +79,19 @@ public class PrescriptionController : ControllerBase
         };
     }
     
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<Result<bool>>> Delete(int id)
+    {
+        var result = await _prescriptionService.Delete(id);
+        return result.ErrorType switch
+        {
+            ServiceErrorType.Success => Ok(result.Data),
+            _ => StatusCode((int)result.ErrorType, result.Message)
+        };
+    }
+    
 }

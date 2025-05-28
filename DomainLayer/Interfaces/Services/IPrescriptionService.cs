@@ -13,5 +13,5 @@ public interface IPrescriptionService
     
     Task<Result<CreateOrUpdatePrescriptionDto>> Update(CreateOrUpdatePrescriptionDto prescriptionDto);
     
-    Task<Result<CreateOrUpdatePrescriptionDto>> Delete(int id);
+    Task<Result<bool>> Delete(int id);
 }

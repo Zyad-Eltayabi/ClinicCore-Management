@@ -86,8 +86,15 @@ public class PrescriptionService : IPrescriptionService
         return Result<CreateOrUpdatePrescriptionDto>.Success(updatedPrescription);
     }
 
-    public Task<Result<CreateOrUpdatePrescriptionDto>> Delete(int id)
+    public async Task<Result<bool>> Delete(int id)
     {
-        throw new NotImplementedException();
+        var prescription = await _unitOfWork.Prescriptions.GetById(id);
+        if (prescription == null)
+            return Result<bool>.Failure("Prescription not found", ServiceErrorType.NotFound);
+
+        _unitOfWork.Prescriptions.Delete(prescription);
+        await _unitOfWork.SaveChanges();
+        
+        return Result<bool>.Success(true);
     }
 }
