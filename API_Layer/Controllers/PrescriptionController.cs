@@ -64,4 +64,19 @@ public class PrescriptionController : ControllerBase
         };
     }
     
+    [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<Result<CreateOrUpdatePrescriptionDto>>> GetById(int id)
+    {
+        var result = await _prescriptionService.GetById(id);
+        return result.ErrorType switch
+        {
+            ServiceErrorType.Success => Ok(result.Data),
+            _ => StatusCode((int)result.ErrorType, result.Message)
+        };
+    }
+    
 }

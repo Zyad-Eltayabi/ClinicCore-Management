@@ -29,9 +29,14 @@ public class PrescriptionService : IPrescriptionService
         return Result<IEnumerable<CreateOrUpdatePrescriptionDto>>.Success(prescriptionDtos);
     }
 
-    public Task<Result<CreateOrUpdatePrescriptionDto>> GetById(int id)
+    public async Task<Result<CreateOrUpdatePrescriptionDto>> GetById(int id)
     {
-        throw new NotImplementedException();
+        var prescription = await _unitOfWork.Prescriptions.GetById(id);
+        if (prescription == null)
+            return Result<CreateOrUpdatePrescriptionDto>.Failure("Prescription not found", ServiceErrorType.NotFound);
+
+        var prescriptionDto = _mapper.Map<CreateOrUpdatePrescriptionDto>(prescription);
+        return Result<CreateOrUpdatePrescriptionDto>.Success(prescriptionDto);
     }
 
     private async Task<ValidationsResult> ValidatePrescriptionDto(CreateOrUpdatePrescriptionDto prescriptionDto)
