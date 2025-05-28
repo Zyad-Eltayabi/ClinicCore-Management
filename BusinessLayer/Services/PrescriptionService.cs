@@ -19,9 +19,14 @@ public class PrescriptionService : IPrescriptionService
         _mapper = mapper;
     }
 
-    public Task<Result<IEnumerable<CreateOrUpdatePrescriptionDto>>> GetAll()
+    public async Task<Result<IEnumerable<CreateOrUpdatePrescriptionDto>>> GetAll()
     {
-        throw new NotImplementedException();
+        var prescriptions = await _unitOfWork.Prescriptions.GetAll();
+        if (prescriptions == null)
+            return Result<IEnumerable<CreateOrUpdatePrescriptionDto>>.Failure("No prescriptions found", ServiceErrorType.NotFound);
+
+        var prescriptionDtos = _mapper.Map<IEnumerable<CreateOrUpdatePrescriptionDto>>(prescriptions);
+        return Result<IEnumerable<CreateOrUpdatePrescriptionDto>>.Success(prescriptionDtos);
     }
 
     public Task<Result<CreateOrUpdatePrescriptionDto>> GetById(int id)
