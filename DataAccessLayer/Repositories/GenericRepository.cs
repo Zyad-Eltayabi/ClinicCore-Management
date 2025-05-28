@@ -36,8 +36,7 @@ namespace DataAccessLayer.Repositories
 
         public async Task<IEnumerable<T>> GetAll()
         {
-            var items = await _entity.ToListAsync();
-            ;
+            var items = await _entity.AsNoTracking().ToListAsync();
             return items;
         }
 
