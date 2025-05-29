@@ -45,8 +45,5 @@ public class PaymentService : IPaymentService
         throw new NotImplementedException();
     }
 
-    public Task<Result<bool>> Delete(int id)
-    {
-        throw new NotImplementedException();
-    }
+   
 }

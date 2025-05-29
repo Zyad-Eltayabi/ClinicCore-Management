@@ -11,5 +11,4 @@ public interface IPaymentService
     
     Task<Result<bool>> Update(PaymentDto paymentDto);
     
-    Task<Result<bool>> Delete(int id);
 }
