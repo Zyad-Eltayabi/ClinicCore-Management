@@ -1,8 +1,10 @@
 using AutoMapper;
+using BusinessLayer.Validations;
 using DomainLayer.DTOs;
 using DomainLayer.Helpers;
 using DomainLayer.Interfaces;
 using DomainLayer.Interfaces.Services;
+using DomainLayer.Models;
 
 namespace BusinessLayer.Services;
 
@@ -39,10 +41,42 @@ public class MedicalRecordService : IMedicalRecordService
         var medicalRecordDto = _mapper.Map<MedicalRecordDto>(medicalRecord);
         return Result<MedicalRecordDto>.Success(medicalRecordDto);
     }
-
-    public Task<Result<MedicalRecordDto>> Add(MedicalRecordDto medicalRecordDto)
+    
+    private async Task<ValidationsResult> ValidateMedicalRecordDto(MedicalRecordDto medicalRecordDto)
     {
-        throw new NotImplementedException();
+        var medicalValidator = new MedicalRecordValidator();
+        var validations = await medicalValidator.ValidateAsync(medicalRecordDto);
+        if (!validations.IsValid)
+        {
+            string message = string.Join("; ", validations.Errors.Select(e => e.ErrorMessage));
+            return new ValidationsResult(false, message);
+        }
+
+        return new ValidationsResult(true);
+    }
+    
+    public async Task<Result<MedicalRecordDto>> Add(MedicalRecordDto medicalRecordDto)
+    {
+        // Validate the medical record DTO
+        var validations = await ValidateMedicalRecordDto(medicalRecordDto);
+        if (!validations.IsValid)
+            return Result<MedicalRecordDto>.Failure(validations.ErrorMessage, ServiceErrorType.ValidationError);
+
+        // Map the DTO to a domain model
+        var medicalRecord = _mapper.Map<MedicalRecord>(medicalRecordDto);
+    
+        // Add the medical record to the repository
+        await _unitOfWork.MedicalRecords.Add(medicalRecord);
+    
+        // Save changes to the database
+        bool saveResult = await _unitOfWork.SaveChanges();
+    
+        if (!saveResult)
+            return Result<MedicalRecordDto>.Failure("Failed to add medical record to database", ServiceErrorType.DatabaseError);
+
+        // Map the created entity back to DTO and return success
+        var createdMedicalRecordDto = _mapper.Map<MedicalRecordDto>(medicalRecord);
+        return Result<MedicalRecordDto>.Success(createdMedicalRecordDto);
     }
 
     public Task<Result<bool>> Update(MedicalRecordDto medicalRecordDto)

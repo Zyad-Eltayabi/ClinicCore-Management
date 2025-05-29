@@ -46,4 +46,19 @@ public class MedicalRecordController : ControllerBase
       };
    }
    
+   [HttpPost]
+   [ProducesResponseType(StatusCodes.Status201Created)]
+   [ProducesResponseType(StatusCodes.Status400BadRequest)]
+   [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+   [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+   public async Task<ActionResult<MedicalRecordDto>> Add([FromBody] MedicalRecordDto medicalRecordDto)
+   {
+      var result = await _medicalRecordService.Add(medicalRecordDto);
+      return result.ErrorType switch
+      {
+         ServiceErrorType.Success => CreatedAtAction(nameof(Get), result.Data),
+         _ => StatusCode((int)result.ErrorType, result.Message)
+      };
+   }
+   
 }
