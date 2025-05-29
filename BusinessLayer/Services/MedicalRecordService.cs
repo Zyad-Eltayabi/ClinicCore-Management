@@ -104,8 +104,24 @@ public class MedicalRecordService : IMedicalRecordService
         return Result<bool>.Success(true);
     }
 
-    public Task<Result<bool>> Delete(int id)
+    public async Task<Result<bool>> Delete(int id)
     {
-        throw new NotImplementedException();
+        // Get the medical record by id
+        var medicalRecord = await _unitOfWork.MedicalRecords.GetById(id);
+    
+        // Check if the medical record exists
+        if (medicalRecord == null)
+            return Result<bool>.Failure("Medical record not found", ServiceErrorType.NotFound);
+    
+        // Delete the medical record
+        _unitOfWork.MedicalRecords.Delete(medicalRecord);
+    
+        // Save changes to the database
+        bool saveResult = await _unitOfWork.SaveChanges();
+    
+        if (!saveResult)
+            return Result<bool>.Failure("Failed to delete medical record from database", ServiceErrorType.DatabaseError);
+    
+        return Result<bool>.Success();
     }
 }

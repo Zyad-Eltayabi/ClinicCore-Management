@@ -77,5 +77,18 @@ public class MedicalRecordController : ControllerBase
       };
    }
    
-   
+   [HttpDelete("{id}")]
+   [ProducesResponseType(StatusCodes.Status200OK)]
+   [ProducesResponseType(StatusCodes.Status404NotFound)]
+   [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+   [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+   public async Task<ActionResult<bool>> Delete(int id)
+   {
+      var result = await _medicalRecordService.Delete(id);
+      return result.ErrorType switch
+      {
+         ServiceErrorType.Success => Ok(),
+         _ => StatusCode((int)result.ErrorType, result.Message)
+      };
+   }
 }
