@@ -61,4 +61,21 @@ public class MedicalRecordController : ControllerBase
       };
    }
    
+   [HttpPut]
+   [ProducesResponseType(StatusCodes.Status200OK)]
+   [ProducesResponseType(StatusCodes.Status400BadRequest)]
+   [ProducesResponseType(StatusCodes.Status404NotFound)]
+   [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+   [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+   public async Task<ActionResult<bool>> Update([FromBody] MedicalRecordDto medicalRecordDto)
+   {
+      var result = await _medicalRecordService.Update(medicalRecordDto);
+      return result.ErrorType switch
+      {
+         ServiceErrorType.Success => Ok(result.Data),
+         _ => StatusCode((int)result.ErrorType, result.Message)
+      };
+   }
+   
+   
 }

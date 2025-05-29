@@ -79,9 +79,29 @@ public class MedicalRecordService : IMedicalRecordService
         return Result<MedicalRecordDto>.Success(createdMedicalRecordDto);
     }
 
-    public Task<Result<bool>> Update(MedicalRecordDto medicalRecordDto)
+    public async Task<Result<bool>> Update(MedicalRecordDto medicalRecordDto)
     {
-        throw new NotImplementedException();
+        // Validate the medical record DTO
+        var validations = await ValidateMedicalRecordDto(medicalRecordDto);
+        if (!validations.IsValid)
+            return Result<bool>.Failure(validations.ErrorMessage, ServiceErrorType.ValidationError);
+
+        // Get the existing record
+        var existingRecord = await _unitOfWork.MedicalRecords.GetById(medicalRecordDto.MedicalRecordID);
+        
+        if (existingRecord == null)
+            return Result<bool>.Failure("Medical record not found", ServiceErrorType.NotFound);
+
+        // Map the updated data to the existing entity
+        _mapper.Map(medicalRecordDto, existingRecord);
+        
+        // Save changes to the database
+        bool saveResult = await _unitOfWork.SaveChanges();
+    
+        if (!saveResult)
+            return Result<bool>.Failure("Failed to update medical record in database", ServiceErrorType.DatabaseError);
+
+        return Result<bool>.Success(true);
     }
 
     public Task<Result<bool>> Delete(int id)
