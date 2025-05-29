@@ -29,9 +29,15 @@ public class MedicalRecordService : IMedicalRecordService
         return Result<IEnumerable<MedicalRecordDto>>.Success(medicalRecordDtos);
     }
 
-    public Task<Result<MedicalRecordDto>> GetById(int id)
+    public async Task<Result<MedicalRecordDto>> GetById(int id)
     {
-        throw new NotImplementedException();
+        var medicalRecord = await _unitOfWork.MedicalRecords.GetById(id);
+    
+        if (medicalRecord == null)
+            return Result<MedicalRecordDto>.Failure("Medical record not found", ServiceErrorType.NotFound);
+    
+        var medicalRecordDto = _mapper.Map<MedicalRecordDto>(medicalRecord);
+        return Result<MedicalRecordDto>.Success(medicalRecordDto);
     }
 
     public Task<Result<MedicalRecordDto>> Add(MedicalRecordDto medicalRecordDto)

@@ -31,4 +31,19 @@ public class MedicalRecordController : ControllerBase
       };
    }
   
+   [HttpGet("{id}")]
+   [ProducesResponseType(StatusCodes.Status200OK)]
+   [ProducesResponseType(StatusCodes.Status404NotFound)]
+   [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+   [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+   public async Task<ActionResult<MedicalRecordDto>> Get(int id)
+   {
+      var medicalRecord = await _medicalRecordService.GetById(id);
+      return medicalRecord.ErrorType switch
+      {
+         ServiceErrorType.Success => Ok(medicalRecord.Data),
+         _ => StatusCode((int)medicalRecord.ErrorType, medicalRecord.Message)
+      };
+   }
+   
 }
