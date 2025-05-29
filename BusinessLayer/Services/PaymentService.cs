@@ -1,4 +1,5 @@
 using AutoMapper;
+using BusinessLayer.Validations;
 using DomainLayer.DTOs;
 using DomainLayer.Helpers;
 using DomainLayer.Interfaces;
@@ -40,10 +41,44 @@ public class PaymentService : IPaymentService
         return Result<PaymentDto>.Success(paymentDto);
     }
 
-    public Task<Result<bool>> Update(PaymentDto paymentDto)
+    public async Task<Result<bool>> Update(PaymentDto paymentDto)
     {
-        throw new NotImplementedException();
+        // Validate the payment DTO
+        var validations = await ValidatePaymentDto(paymentDto);
+        if (!validations.IsValid)
+            return Result<bool>.Failure(validations.ErrorMessage, ServiceErrorType.ValidationError);
+
+        // Get the existing payment
+        var existingPayment = await _unitOfWork.Payments.GetById(paymentDto.PaymentID);
+        
+        if (existingPayment == null)
+            return Result<bool>.Failure($"Payment with ID {paymentDto.PaymentID} not found", ServiceErrorType.NotFound);
+
+        // Map the updated data to the existing entity
+        _mapper.Map(paymentDto, existingPayment);
+        
+        // Update the payment
+        _unitOfWork.Payments.Update(existingPayment);
+        
+        // Save changes to the database
+        bool saveResult = await _unitOfWork.SaveChanges();
+
+        if (!saveResult)
+            return Result<bool>.Failure("Failed to update payment in database", ServiceErrorType.DatabaseError);
+
+        return Result<bool>.Success();
     }
 
-   
+    private async Task<ValidationsResult> ValidatePaymentDto(PaymentDto paymentDto)
+    {
+        var paymentValidator = new PaymentValidator();
+        var validations =  paymentValidator.Validate(paymentDto);
+        if (!validations.IsValid)
+        {
+            string message = string.Join("; ", validations.Errors.Select(e => e.ErrorMessage));
+            return new ValidationsResult(false, message);
+        }
+
+        return new ValidationsResult(true);
+    }
 }

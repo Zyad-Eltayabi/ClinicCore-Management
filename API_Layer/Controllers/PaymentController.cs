@@ -44,4 +44,20 @@ public class PaymentController : ControllerBase
             _ => StatusCode((int)payment.ErrorType, payment.Message)
         };
     }
+    
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<bool>> Update(PaymentDto paymentDto)
+    {
+        var result = await _paymentService.Update(paymentDto);
+        return result.ErrorType switch
+        {
+            ServiceErrorType.Success => Ok(),
+            _ => StatusCode((int)result.ErrorType, result.Message)
+        };
+    }
 }
