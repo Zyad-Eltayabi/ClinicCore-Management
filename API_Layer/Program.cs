@@ -29,6 +29,8 @@ builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
+builder.Services.AddScoped<IMedicalRecordService, MedicalRecordService>();
+
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddExceptionHandler<GlobalErrorHandling>();
 builder.Services.AddProblemDetails();
