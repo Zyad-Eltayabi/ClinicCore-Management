@@ -28,9 +28,16 @@ public class PaymentService : IPaymentService
         return Result<IEnumerable<PaymentDto>>.Success(paymentsDto);
     }
 
-    public Task<Result<PaymentDto>> GetById(int id)
+    public async Task<Result<PaymentDto>> GetById(int id)
     {
-        throw new NotImplementedException();
+        var payment = await _unitOfWork.Payments.GetById(id);
+    
+        if (payment == null)
+            return Result<PaymentDto>.Failure($"Payment with ID {id} not found", ServiceErrorType.NotFound);
+    
+        // Map payment to paymentDto
+        var paymentDto = _mapper.Map<PaymentDto>(payment);
+        return Result<PaymentDto>.Success(paymentDto);
     }
 
     public Task<Result<bool>> Update(PaymentDto paymentDto)

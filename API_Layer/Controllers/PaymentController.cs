@@ -29,4 +29,19 @@ public class PaymentController : ControllerBase
             _ => StatusCode((int)payments.ErrorType, payments.Message)
         };
     }
+    
+    [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<PaymentDto>> GetById(int id)
+    {
+        var payment = await _paymentService.GetById(id);
+        return payment.ErrorType switch
+        {
+            ServiceErrorType.Success => Ok(payment.Data),
+            _ => StatusCode((int)payment.ErrorType, payment.Message)
+        };
+    }
 }
