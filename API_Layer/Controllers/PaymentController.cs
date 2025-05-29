@@ -1,0 +1,32 @@
+using DomainLayer.DTOs;
+using DomainLayer.Helpers;
+using DomainLayer.Interfaces.Services;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ClinicAPI.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class PaymentController : ControllerBase
+{
+    private readonly IPaymentService _paymentService;
+
+    public PaymentController(IPaymentService paymentService)
+    {
+        _paymentService = paymentService;
+    }
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<IEnumerable<PaymentDto>>> Get()
+    {
+        var payments = await _paymentService.GetAll();
+        return payments.ErrorType switch
+        {
+            ServiceErrorType.Success => Ok(payments.Data),
+            _ => StatusCode((int)payments.ErrorType, payments.Message)
+        };
+    }
+}
