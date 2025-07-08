@@ -8,6 +8,8 @@ using DomainLayer.Interfaces.Services;
 using DomainLayer.Interfaces.ServicesInterfaces;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
+using DomainLayer.Models;
+using Microsoft.AspNetCore.Identity;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,11 +20,13 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 
-// Use SQL Server with the connection string from the configuration file.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseSqlServer((builder.Configuration.GetConnectionString("Default")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
 });
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
@@ -54,5 +58,3 @@ app.UseExceptionHandler();
 app.MapControllers();
 
 app.Run();
-
-//

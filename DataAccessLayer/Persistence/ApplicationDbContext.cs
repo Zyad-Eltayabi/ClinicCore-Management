@@ -1,10 +1,13 @@
 ﻿using DataAccessLayer.Persistence.Configurations;
 using DomainLayer.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace DataAccessLayer.Persistence
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -13,6 +16,8 @@ namespace DataAccessLayer.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
         }
 
@@ -22,5 +27,4 @@ namespace DataAccessLayer.Persistence
         public DbSet<MedicalRecord> MedicalRecords { get; set; }
         public DbSet<Payment> Payments { get; set; }
     }
-
 }
