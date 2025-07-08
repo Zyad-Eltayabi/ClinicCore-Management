@@ -33,6 +33,31 @@ namespace BusinessLayer.Services
             _mapper = mapper;
         }
 
+        public async Task<AuthResponseDto> Login(LoginDto loginDto)
+        {
+            var user = await _userManager.FindByEmailAsync(loginDto.Email);
+
+            if (user is null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
+                return new AuthResponseDto
+                {
+                    message = "Email or Password Incorrect",
+                    isAuthenticated = false
+                };
+
+            var token = await CreateJwtToken(user);
+            var roles = await _userManager.GetRolesAsync(user);
+            return new AuthResponseDto
+            {
+                message = "Login successful",
+                token = token,
+                isAuthenticated = true,
+                UserName = user.UserName,
+                Email = user.Email,
+                ExpiresOn = DateTime.Now.AddMinutes(_jwt.ExpirationInMinutes),
+                Roles = roles.ToList()
+            };
+        }
+
         public async Task<AuthResponseDto> Register(RegisterDto registerDto)
         {
             // validate registerDto

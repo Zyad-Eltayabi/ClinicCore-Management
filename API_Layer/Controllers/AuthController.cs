@@ -27,5 +27,17 @@ namespace ClinicAPI.Controllers
 
             return Ok(response);
         }
+
+        [HttpPost]
+        [Route("Login")]
+        public async Task<ActionResult> Login([FromBody] LoginDto loginDto)
+        {
+            var response = await _authService.Login(loginDto);
+
+            if (response.isAuthenticated is false)
+                return BadRequest(response.message);
+
+            return Ok(response);
+        }
     }
 }
