@@ -7,6 +7,7 @@ namespace DataAccessLayer.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
+        protected readonly ApplicationDbContext _context;
         private readonly DbSet<T> _entity;
 
         public GenericRepository(ApplicationDbContext applicationDbContext)
@@ -14,8 +15,6 @@ namespace DataAccessLayer.Repositories
             _context = applicationDbContext;
             _entity = _context.Set<T>();
         }
-
-        protected readonly ApplicationDbContext _context;
 
 
         public async Task Add(T entity)
@@ -42,7 +41,7 @@ namespace DataAccessLayer.Repositories
 
         public async Task<T> GetById(int id)
         {
-            var item = await _entity.FindAsync(id); 
+            var item = await _entity.FindAsync(id);
             return item;
         }
 
@@ -55,6 +54,11 @@ namespace DataAccessLayer.Repositories
         {
             var rowsAffected = await _entity.Where(predicate).ExecuteDeleteAsync();
             return rowsAffected > 0;
+        }
+
+        public async Task<T> Find(Expression<Func<T, bool>> predicate)
+        {
+            return await _entity.FirstOrDefaultAsync(predicate);
         }
     }
 }

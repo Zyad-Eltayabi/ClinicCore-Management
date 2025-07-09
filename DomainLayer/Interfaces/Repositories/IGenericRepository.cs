@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using DomainLayer.Models;
+﻿using System.Linq.Expressions;
 
 namespace DomainLayer.Interfaces.Repositories
 {
@@ -17,5 +11,6 @@ namespace DomainLayer.Interfaces.Repositories
         Task<IEnumerable<T>> GetAll();
         Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
         public Task<bool> Delete(Expression<Func<T, bool>> predicate);
+        Task<T> Find(Expression<Func<T, bool>> predicate);
     }
 }

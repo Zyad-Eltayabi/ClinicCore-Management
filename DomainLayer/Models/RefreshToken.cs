@@ -1,11 +1,12 @@
-using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DomainLayer.Models;
 
 // RefreshToken.cs
+[Table("RefreshTokens")]
 public class RefreshToken
 {
-    public int Id { get; set; } 
+    public int Id { get; set; }
     public string Token { get; set; }
 
     public DateTime ExpiresOn { get; set; }

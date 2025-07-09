@@ -1,6 +1,5 @@
 ﻿using DomainLayer.DTOs;
 using DomainLayer.Interfaces.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAPI.Controllers
@@ -26,7 +25,7 @@ namespace ClinicAPI.Controllers
         {
             var response = await _authService.Register(registerDto);
 
-            if(response.IsAuthenticated is false)
+            if (response.IsAuthenticated is false)
                 return BadRequest(response.Message);
 
             return Ok(response);
@@ -45,7 +44,19 @@ namespace ClinicAPI.Controllers
             if (response.IsAuthenticated is false)
                 return BadRequest(response.Message);
 
+            SetTokenCookie(response.RefreshToken, response.RefreshTokenExpiresOn);
+
             return Ok(response);
+        }
+
+        private void SetTokenCookie(string token, DateTime expirationDate)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = expirationDate.ToLocalTime()
+            };
+            Response.Cookies.Append("RefreshToken", token, cookieOptions);
         }
     }
 }

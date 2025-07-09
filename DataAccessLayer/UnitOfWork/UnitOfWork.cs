@@ -11,13 +11,6 @@ namespace DataAccessLayer.UnitOfWork
     {
         private readonly ApplicationDbContext _context;
         private IDbContextTransaction _transaction;
-        public IGenericRepository<Patient> Patients { get; }
-        public IGenericRepository<Doctor> Doctors { get; }
-        public IGenericRepository<Prescription> Prescriptions { get; }
-        public IGenericRepository<Payment> Payments { get; }
-        public IGenericRepository<MedicalRecord> MedicalRecords { get; }
-
-        public IGenericRepository<Appointment> Appointments { get; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -28,7 +21,18 @@ namespace DataAccessLayer.UnitOfWork
             Prescriptions = new GenericRepository<Prescription>(_context);
             Payments = new GenericRepository<Payment>(_context);
             MedicalRecords = new GenericRepository<MedicalRecord>(_context);
+            RefreshTokens = new GenericRepository<RefreshToken>(_context);
         }
+
+        public IGenericRepository<Patient> Patients { get; }
+        public IGenericRepository<Doctor> Doctors { get; }
+        public IGenericRepository<Prescription> Prescriptions { get; }
+        public IGenericRepository<Payment> Payments { get; }
+        public IGenericRepository<MedicalRecord> MedicalRecords { get; }
+
+        public IGenericRepository<Appointment> Appointments { get; }
+        public IGenericRepository<RefreshToken> RefreshTokens { get; }
+
         public async Task<bool> SaveChanges()
         {
             int affectedRows = await _context.SaveChangesAsync();
@@ -42,12 +46,12 @@ namespace DataAccessLayer.UnitOfWork
 
         public async Task Commit()
         {
-           await _transaction.CommitAsync();
+            await _transaction.CommitAsync();
         }
 
         public async Task Rollback()
         {
-           await _transaction.RollbackAsync();
+            await _transaction.RollbackAsync();
         }
 
 
@@ -56,5 +60,4 @@ namespace DataAccessLayer.UnitOfWork
             _context.Dispose();
         }
     }
-
 }

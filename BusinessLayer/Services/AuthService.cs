@@ -1,36 +1,36 @@
-﻿using AutoMapper;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using AutoMapper;
 using BusinessLayer.Validations;
 using ClinicAPI.Helpers;
 using DomainLayer.DTOs;
+using DomainLayer.Interfaces;
 using DomainLayer.Interfaces.Services;
 using DomainLayer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLayer.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly JwtOptions _jwt;
         private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
-        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<JwtOptions> jwt, IMapper mapper)
+        private readonly JwtOptions _jwt;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
+            IOptions<JwtOptions> jwt, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _unitOfWork = unitOfWork;
             _jwt = jwt.Value;
-            _mapper = mapper;
         }
 
         public async Task<AuthResponseDto> Login(LoginDto loginDto)
@@ -46,6 +46,7 @@ namespace BusinessLayer.Services
 
             var token = await CreateJwtToken(user);
             var roles = await _userManager.GetRolesAsync(user);
+            var refreshToken = await GetActiveRefreshToken(user);
             return new AuthResponseDto
             {
                 Message = "Login successful",
@@ -54,7 +55,9 @@ namespace BusinessLayer.Services
                 UserName = user.UserName,
                 Email = user.Email,
                 //ExpiresOn = DateTime.Now.AddMinutes(_jwt.ExpirationInMinutes),
-                Roles = roles.ToList()
+                Roles = roles.ToList(),
+                RefreshToken = refreshToken.Token,
+                RefreshTokenExpiresOn = refreshToken.ExpiresOn
             };
         }
 
@@ -95,13 +98,32 @@ namespace BusinessLayer.Services
             return new AuthResponseDto
             {
                 Message = "User registered successfully",
-                Token =token,
+                Token = token,
                 IsAuthenticated = true,
                 UserName = newUser.UserName,
                 Email = newUser.Email,
-              //  ExpiresOn = DateTime.Now.AddMinutes(_jwt.ExpirationInMinutes),
+                //  ExpiresOn = DateTime.Now.AddMinutes(_jwt.ExpirationInMinutes),
                 Roles = new List<string> { registerDto.RoleName }
             };
+        }
+
+        private async Task<RefreshToken> GetActiveRefreshToken(ApplicationUser user)
+        {
+            // check if user has a refresh token
+            var activeRefreshToken = await _unitOfWork.RefreshTokens.Find(t =>
+                t.UserId == user.Id &&
+                t.ExpiresOn > DateTime.Now &&
+                t.RevokedOn == null);
+
+            if (activeRefreshToken is not null)
+                return activeRefreshToken;
+
+            // at this point, the user has no active refresh token
+            var newRefreshToken = GenerateRefreshToken();
+            // save the new refresh token
+            user.RefreshTokens.Add(newRefreshToken);
+            await _userManager.UpdateAsync(user);
+            return newRefreshToken;
         }
 
         private async Task<string> CreateJwtToken(ApplicationUser user)
@@ -114,14 +136,14 @@ namespace BusinessLayer.Services
                 roleClaims.Add(new Claim("roles", role));
 
             var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("uid", user.Id)
-            }
-            .Union(userClaims)
-            .Union(roleClaims);
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim("uid", user.Id)
+                }
+                .Union(userClaims)
+                .Union(roleClaims);
 
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.Key));
             var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
@@ -134,6 +156,19 @@ namespace BusinessLayer.Services
                 signingCredentials: signingCredentials);
 
             return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+        }
+
+        private RefreshToken GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            return new RefreshToken
+            {
+                Token = Convert.ToBase64String(randomNumber),
+                ExpiresOn = DateTime.Now.AddDays(_jwt.RefreshTokenExpirationInDays),
+                CreatedOn = DateTime.Now
+            };
         }
     }
 }

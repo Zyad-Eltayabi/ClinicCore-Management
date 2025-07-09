@@ -1,10 +1,7 @@
-using System.ComponentModel.DataAnnotations;
-using BusinessLayer.Validations;
 using DomainLayer.DTOs;
 using DomainLayer.Helpers;
 using DomainLayer.Interfaces.Services;
-using FluentValidation;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAPI.Controllers;
@@ -77,7 +74,7 @@ public class AppointmentController : ControllerBase
             _ => StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred")*/
         };
     }
-    
+
     [HttpPut, Route("complete-appointment")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -93,8 +90,9 @@ public class AppointmentController : ControllerBase
             _ => StatusCode((int)result.ErrorType, result.Message)
         };
     }
-    
+
     [HttpGet]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
@@ -108,7 +106,7 @@ public class AppointmentController : ControllerBase
             _ => StatusCode((int)appointments.ErrorType, appointments.Message)
         };
     }
-    
+
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
