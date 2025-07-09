@@ -40,20 +40,20 @@ namespace BusinessLayer.Services
             if (user is null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
                 return new AuthResponseDto
                 {
-                    message = "Email or Password Incorrect",
-                    isAuthenticated = false
+                    Message = "Email or Password Incorrect",
+                    IsAuthenticated = false
                 };
 
             var token = await CreateJwtToken(user);
             var roles = await _userManager.GetRolesAsync(user);
             return new AuthResponseDto
             {
-                message = "Login successful",
-                token = token,
-                isAuthenticated = true,
+                Message = "Login successful",
+                Token = token,
+                IsAuthenticated = true,
                 UserName = user.UserName,
                 Email = user.Email,
-                ExpiresOn = DateTime.Now.AddMinutes(_jwt.ExpirationInMinutes),
+                //ExpiresOn = DateTime.Now.AddMinutes(_jwt.ExpirationInMinutes),
                 Roles = roles.ToList()
             };
         }
@@ -67,7 +67,7 @@ namespace BusinessLayer.Services
             {
                 return new AuthResponseDto
                 {
-                    message = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)),
+                    Message = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)),
                 };
             }
 
@@ -85,8 +85,8 @@ namespace BusinessLayer.Services
             {
                 return new AuthResponseDto
                 {
-                    message = string.Join(", ", result.Errors.Select(e => e.Description)),
-                    isAuthenticated = false
+                    Message = string.Join(", ", result.Errors.Select(e => e.Description)),
+                    IsAuthenticated = false
                 };
             }
 
@@ -94,12 +94,12 @@ namespace BusinessLayer.Services
             var token = await CreateJwtToken(newUser);
             return new AuthResponseDto
             {
-                message = "User registered successfully",
-                token = token,
-                isAuthenticated = true,
+                Message = "User registered successfully",
+                Token =token,
+                IsAuthenticated = true,
                 UserName = newUser.UserName,
                 Email = newUser.Email,
-                ExpiresOn = DateTime.Now.AddMinutes(_jwt.ExpirationInMinutes),
+              //  ExpiresOn = DateTime.Now.AddMinutes(_jwt.ExpirationInMinutes),
                 Roles = new List<string> { registerDto.RoleName }
             };
         }
