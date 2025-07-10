@@ -191,20 +191,32 @@ namespace BusinessLayer.Services
         {
             var userClaims = await _userManager.GetClaimsAsync(user);
             var roles = await _userManager.GetRolesAsync(user);
-            var roleClaims = new List<Claim>();
 
-            foreach (var role in roles)
-                roleClaims.Add(new Claim("roles", role));
+            var claims = new List<Claim>();
 
-            var claims = new[]
+            // add roles and role claims to claims
+            foreach (var roleName in roles)
+            {
+                // add role to claims
+                claims.Add(new Claim("role", roleName));
+                // Get claims from role
+                var role = await _roleManager.FindByNameAsync(roleName);
+                if (role is not null)
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                    var roleClaims = await _roleManager.GetClaimsAsync(role);
+                    claims.AddRange(roleClaims);
+                }
+            }
+
+            var allClaims = new[]
+                {
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim("uid", user.Id)
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                    new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email)
                 }
                 .Union(userClaims)
-                .Union(roleClaims);
+                .Union(claims);
 
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.Key));
             var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
@@ -212,8 +224,8 @@ namespace BusinessLayer.Services
             var jwtSecurityToken = new JwtSecurityToken(
                 issuer: _jwt.Issuer,
                 audience: _jwt.Audience,
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(_jwt.ExpirationInMinutes),
+                allClaims,
+                expires: DateTime.UtcNow.AddMinutes(_jwt.ExpirationInMinutes),
                 signingCredentials: signingCredentials);
 
             return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
