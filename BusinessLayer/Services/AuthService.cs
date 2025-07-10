@@ -136,6 +136,9 @@ namespace BusinessLayer.Services
 
             await _userManager.AddToRoleAsync(newUser, registerDto.RoleName);
             var token = await CreateJwtToken(newUser);
+            var refreshToken = GenerateRefreshToken();
+            newUser.RefreshTokens.Add(refreshToken);
+            await _userManager.UpdateAsync(newUser);
             return new AuthResponseDto
             {
                 Message = "User registered successfully",
@@ -143,8 +146,9 @@ namespace BusinessLayer.Services
                 IsAuthenticated = true,
                 UserName = newUser.UserName,
                 Email = newUser.Email,
-                //  ExpiresOn = DateTime.Now.AddMinutes(_jwt.ExpirationInMinutes),
-                Roles = new List<string> { registerDto.RoleName }
+                Roles = new List<string> { registerDto.RoleName },
+                RefreshToken = refreshToken.Token,
+                RefreshTokenExpiresOn = refreshToken.ExpiresOn
             };
         }
 

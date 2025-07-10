@@ -28,6 +28,8 @@ namespace ClinicAPI.Controllers
             if (response.IsAuthenticated is false)
                 return BadRequest(response.Message);
 
+            SetTokenCookie(response.RefreshToken, response.RefreshTokenExpiresOn);
+
             return Ok(response);
         }
 
