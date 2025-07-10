@@ -78,5 +78,22 @@ namespace ClinicAPI.Controllers
             SetTokenCookie(response.RefreshToken, response.RefreshTokenExpiresOn);
             return Ok(response);
         }
+
+        [HttpPost]
+        [Route("RevokeToken")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenDto revokeTokenDto)
+        {
+            var token = revokeTokenDto.Token ?? Request.Cookies["RefreshToken"];
+            if (string.IsNullOrEmpty(token))
+                return BadRequest("Invalid token");
+            var response = await _authService.RevokeToken(token);
+            if (response is false)
+                return BadRequest("Invalid token");
+            return Ok(response);
+        }
     }
 }

@@ -102,6 +102,22 @@ namespace BusinessLayer.Services
             };
         }
 
+        public async Task<bool> RevokeToken(string token)
+        {
+            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.RefreshTokens.Any(t => t.Token == token));
+
+            if (user is null)
+                return false;
+
+            var refreshToken = await _unitOfWork.RefreshTokens.Find(t => t.Token == token);
+            if (!refreshToken.IsActive)
+                return false;
+
+            refreshToken.RevokedOn = DateTime.UtcNow;
+            await _userManager.UpdateAsync(user);
+            return true;
+        }
+
         public async Task<AuthResponseDto> Register(RegisterDto registerDto)
         {
             // validate registerDto
