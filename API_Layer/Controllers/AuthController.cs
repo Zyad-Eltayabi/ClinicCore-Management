@@ -58,5 +58,23 @@ namespace ClinicAPI.Controllers
             };
             Response.Cookies.Append("RefreshToken", token, cookieOptions);
         }
+
+        [HttpGet]
+        [Route("RefreshToken")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> RefreshToken()
+        {
+            var refreshToken = Request.Cookies["RefreshToken"];
+            if (string.IsNullOrEmpty(refreshToken))
+                return BadRequest("Invalid token");
+            var response = await _authService.RefreshToken(refreshToken);
+            if (response.IsAuthenticated is false)
+                return BadRequest(response.Message);
+            SetTokenCookie(response.RefreshToken, response.RefreshTokenExpiresOn);
+            return Ok(response);
+        }
     }
 }

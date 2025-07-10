@@ -10,6 +10,7 @@ using DomainLayer.Interfaces;
 using DomainLayer.Interfaces.Services;
 using DomainLayer.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -58,6 +59,46 @@ namespace BusinessLayer.Services
                 Roles = roles.ToList(),
                 RefreshToken = refreshToken.Token,
                 RefreshTokenExpiresOn = refreshToken.ExpiresOn
+            };
+        }
+
+        public async Task<AuthResponseDto> RefreshToken(string token)
+        {
+            // check if refresh token belongs to user
+            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.RefreshTokens.Any(t => t.Token == token));
+
+            if (user is null)
+                return new AuthResponseDto
+                {
+                    Message = "Invalid token",
+                    IsAuthenticated = false
+                };
+
+            // check if refresh token is active
+            var refreshToken = await _unitOfWork.RefreshTokens.Find(t => t.Token == token);
+            if (!refreshToken.IsActive)
+                return new AuthResponseDto
+                {
+                    Message = "Invalid token",
+                    IsAuthenticated = false
+                };
+
+            refreshToken.RevokedOn = DateTime.UtcNow;
+
+            var newRefreshToken = GenerateRefreshToken();
+            user.RefreshTokens.Add(newRefreshToken);
+            await _userManager.UpdateAsync(user);
+            var newJwtToken = await CreateJwtToken(user);
+            return new AuthResponseDto
+            {
+                Message = "Token refreshed successfully",
+                Token = newJwtToken,
+                IsAuthenticated = true,
+                RefreshToken = newRefreshToken.Token,
+                RefreshTokenExpiresOn = newRefreshToken.ExpiresOn,
+                Email = user.Email,
+                UserName = user.UserName,
+                Roles = (await _userManager.GetRolesAsync(user)).ToList()
             };
         }
 
