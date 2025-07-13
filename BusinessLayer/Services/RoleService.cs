@@ -64,8 +64,17 @@ public class RoleService : IRoleService
             : Result<RoleDto>.Failure("Failed to update role", ServiceErrorType.DatabaseError);
     }
 
-    public async Task<Result<RoleDto>> DeleteRole(int id)
+    public async Task<Result<RoleDto>> DeleteRole(string id)
     {
-        throw new NotImplementedException();
+        // get role by id
+        var role = await _roleManager.FindByIdAsync(id);
+        if (role is null)
+            return Result<RoleDto>.Failure("Role not found", ServiceErrorType.NotFound);
+
+        // delete role
+        var result = await _roleManager.DeleteAsync(role);
+        return result.Succeeded
+            ? Result<RoleDto>.Success()
+            : Result<RoleDto>.Failure("Failed to delete role", ServiceErrorType.DatabaseError);
     }
 }

@@ -71,4 +71,21 @@ public class RoleController : ControllerBase
             _ => StatusCode((int)response.ErrorType, response.Message)
         };
     }
+
+    [HttpDelete]
+    [Route("DeleteRole/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public async Task<ActionResult> DeleteRole(string id)
+    {
+        // Call the service method to delete a role
+        var response = await _roleService.DeleteRole(id);
+        return response.ErrorType switch
+        {
+            ServiceErrorType.Success => Ok(),
+            _ => StatusCode((int)response.ErrorType, response.Message)
+        };
+    }
 }
