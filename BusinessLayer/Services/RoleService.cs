@@ -2,6 +2,7 @@ using DomainLayer.DTOs;
 using DomainLayer.Helpers;
 using DomainLayer.Interfaces.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLayer.Services;
 
@@ -46,7 +47,20 @@ public class RoleService : IRoleService
 
     public async Task<Result<List<RoleDto>>> GetAllRoles()
     {
-        throw new NotImplementedException();
+        // get all roles
+        var roles = await _roleManager.Roles.ToListAsync();
+        if (roles.Count == 0)
+            return Result<List<RoleDto>>.Failure("Roles not found", ServiceErrorType.NotFound);
+
+        // map roles to roleDto
+        var rolesDto = roles.Select(r =>
+            new RoleDto
+            {
+                Id = r.Id,
+                Name = r.Name
+            }).ToList();
+
+        return Result<List<RoleDto>>.Success(rolesDto);
     }
 
     public async Task<Result<RoleDto>> UpdateRole(RoleDto roleDto)
