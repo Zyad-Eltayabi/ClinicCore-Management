@@ -1,20 +1,16 @@
 ﻿using BusinessLayer.Mapping;
 using BusinessLayer.Services;
-using BusinessLayer.Validations;
 using ClinicAPI.Extensions;
 using ClinicAPI.Middlewares;
 using DataAccessLayer.Persistence;
 using DataAccessLayer.UnitOfWork;
-using DomainLayer.DTOs;
 using DomainLayer.Interfaces;
 using DomainLayer.Interfaces.Services;
 using DomainLayer.Interfaces.ServicesInterfaces;
 using DomainLayer.Models;
-using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.FluentValidation.AspNetCore;
-using static DomainLayer.Enums.GeneralEnum;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +37,7 @@ builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
 builder.Services.AddScoped<IMedicalRecordService, MedicalRecordService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddExceptionHandler<GlobalErrorHandling>();
