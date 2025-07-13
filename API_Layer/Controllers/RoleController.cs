@@ -55,4 +55,20 @@ public class RoleController : ControllerBase
             _ => StatusCode((int)response.ErrorType, response.Message)
         };
     }
+
+    [HttpGet]
+    [Route("GetById/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public async Task<ActionResult<RoleDto>> GetById(string id)
+    {
+        // Call the service method to get a role by ID
+        var response = await _roleService.GetRole(id);
+        return response.ErrorType switch
+        {
+            ServiceErrorType.Success => Ok(response.Data),
+            _ => StatusCode((int)response.ErrorType, response.Message)
+        };
+    }
 }

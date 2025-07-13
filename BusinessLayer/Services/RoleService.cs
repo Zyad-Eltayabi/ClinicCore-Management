@@ -28,9 +28,16 @@ public class RoleService : IRoleService
             : Result<RoleDto>.Failure("Failed to create role", ServiceErrorType.DatabaseError);
     }
 
-    public async Task<Result<RoleDto>> GetRole(int id)
+    public async Task<Result<RoleDto>> GetRole(string id)
     {
-        throw new NotImplementedException();
+        // get role by id
+        var role = await _roleManager.FindByIdAsync(id);
+        if (role is null)
+            return Result<RoleDto>.Failure("Role not found", ServiceErrorType.NotFound);
+
+        // map role to roleDto
+        var roleDto = new RoleDto { Id = role.Id, Name = role.Name };
+        return Result<RoleDto>.Success(roleDto);
     }
 
     public async Task<Result<List<RoleDto>>> GetAllRoles()
