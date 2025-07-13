@@ -23,9 +23,13 @@ public class RoleService : IRoleService
         // create role
         var role = new IdentityRole(roleDto.Name);
         var result = await _roleManager.CreateAsync(role);
-        return result.Succeeded
-            ? Result<RoleDto>.Success()
-            : Result<RoleDto>.Failure("Failed to create role", ServiceErrorType.DatabaseError);
+
+        if (!result.Succeeded)
+            return Result<RoleDto>.Failure("Failed to create role", ServiceErrorType.DatabaseError);
+
+        // map role to roleDto
+        roleDto.Id = role.Id;
+        return Result<RoleDto>.Success(roleDto);
     }
 
     public async Task<Result<RoleDto>> GetRole(string id)

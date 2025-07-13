@@ -33,7 +33,10 @@ public class RoleController : ControllerBase
         var response = await _roleService.CreateRole(roleDto);
         return response.ErrorType switch
         {
-            ServiceErrorType.Success => CreatedAtAction(nameof(AddRole), response.Data),
+            ServiceErrorType.Success => CreatedAtAction(
+                nameof(GetById),
+                new { id = response.Data.Id }
+                , response.Data),
             _ => StatusCode((int)response.ErrorType, response.Message)
         };
     }
