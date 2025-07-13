@@ -40,7 +40,21 @@ public class RoleService : IRoleService
 
     public async Task<Result<RoleDto>> UpdateRole(RoleDto roleDto)
     {
-        throw new NotImplementedException();
+        // check if role name is empty or whitespace or null
+        if (string.IsNullOrEmpty(roleDto.Name) || string.IsNullOrWhiteSpace(roleDto.Name))
+            return Result<RoleDto>.Failure("Role name is required", ServiceErrorType.ValidationError);
+
+        // check if role exists
+        var role = await _roleManager.FindByIdAsync(roleDto.Id);
+        if (role is null)
+            return Result<RoleDto>.Failure("Role not found", ServiceErrorType.NotFound);
+
+        // update role
+        role.Name = roleDto.Name;
+        var result = await _roleManager.UpdateAsync(role);
+        return result.Succeeded
+            ? Result<RoleDto>.Success()
+            : Result<RoleDto>.Failure("Failed to update role", ServiceErrorType.DatabaseError);
     }
 
     public async Task<Result<RoleDto>> DeleteRole(int id)

@@ -37,4 +37,22 @@ public class RoleController : ControllerBase
             _ => StatusCode((int)response.ErrorType, response.Message)
         };
     }
+
+    [HttpPut]
+    [Route("UpdateRole")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public async Task<ActionResult> UpdateRole([FromBody] RoleDto roleDto)
+    {
+        // Call the service method to update a role
+        var response = await _roleService.UpdateRole(roleDto);
+        return response.ErrorType switch
+        {
+            ServiceErrorType.Success => NoContent(),
+            _ => StatusCode((int)response.ErrorType, response.Message)
+        };
+    }
 }
