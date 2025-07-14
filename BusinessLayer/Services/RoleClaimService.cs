@@ -4,6 +4,7 @@ using DomainLayer.DTOs;
 using DomainLayer.Helpers;
 using DomainLayer.Interfaces.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLayer.Services;
 
@@ -126,5 +127,35 @@ public class RoleClaimService : IRoleClaimService
             return Result<string>.Failure("Failed to remove claim", ServiceErrorType.DatabaseError);
 
         return Result<string>.Success("Role claim removed successfully");
+    }
+
+    public async Task<Result<List<RoleClaimDto>>> GetAllRoleClaims()
+    {
+        // Retrieve all roles
+        var roles = await _roleManager.Roles.ToListAsync();
+        if (roles.Count == 0)
+            return Result<List<RoleClaimDto>>.Failure("No roles found", ServiceErrorType.NotFound);
+
+        var roleClaims = new List<RoleClaimDto>();
+
+        foreach (var role in roles)
+        {
+            // Get all claims assigned to this role
+            var claims = await _roleManager.GetClaimsAsync(role);
+
+            foreach (var claim in claims)
+                roleClaims.Add(new RoleClaimDto
+                {
+                    RoleId = role.Id,
+                    RoleName = role.Name,
+                    ClaimType = claim.Type,
+                    ClaimValue = claim.Value
+                });
+        }
+
+        if (roleClaims.Count == 0)
+            return Result<List<RoleClaimDto>>.Failure("No role claims found", ServiceErrorType.NotFound);
+
+        return Result<List<RoleClaimDto>>.Success(roleClaims);
     }
 }

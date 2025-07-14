@@ -66,4 +66,19 @@ public class RoleClaimController : Controller
             _ => StatusCode((int)response.ErrorType, response.Message)
         };
     }
+
+    [HttpGet("GetAllRoleClaims")]
+    [ProducesResponseType(typeof(List<RoleClaimDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<List<RoleClaimDto>>> GetAllRoleClaims()
+    {
+        var response = await _roleClaimService.GetAllRoleClaims();
+
+        return response.ErrorType switch
+        {
+            ServiceErrorType.Success => Ok(response.Data),
+            _ => StatusCode((int)response.ErrorType, response.Message)
+        };
+    }
 }
