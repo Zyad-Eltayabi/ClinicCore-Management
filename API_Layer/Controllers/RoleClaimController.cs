@@ -49,4 +49,21 @@ public class RoleClaimController : Controller
             _ => StatusCode((int)response.ErrorType, response.Message)
         };
     }
+
+    [HttpDelete("DeleteRoleClaim")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public async Task<ActionResult> DeleteRoleClaim([FromBody] DeleteRoleClaimDto dto)
+    {
+        var response = await _roleClaimService.DeleteRoleClaimAsync(dto);
+
+        return response.ErrorType switch
+        {
+            ServiceErrorType.Success => Ok(response.Data),
+            _ => StatusCode((int)response.ErrorType, response.Message)
+        };
+    }
 }

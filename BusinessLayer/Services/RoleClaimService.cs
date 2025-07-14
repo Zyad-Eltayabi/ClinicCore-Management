@@ -97,4 +97,34 @@ public class RoleClaimService : IRoleClaimService
 
         return Result<string>.Success("Role claim updated successfully");
     }
+
+    public async Task<Result<string>> DeleteRoleClaimAsync(DeleteRoleClaimDto roleClaimDto)
+    {
+        // Validate input
+        if (string.IsNullOrWhiteSpace(roleClaimDto.ClaimValue))
+            return Result<string>.Failure("Claim value is required", ServiceErrorType.ValidationError);
+
+        // Retrieve the role by its ID
+        var role = await _roleManager.FindByIdAsync(roleClaimDto.RoleId);
+        if (role is null)
+            return Result<string>.Failure("Role not found", ServiceErrorType.NotFound);
+
+        // Fetch all claims assigned to the role
+        var roleClaims = await _roleManager.GetClaimsAsync(role);
+
+        // Find the claim to remove
+        var matchedClaim = roleClaims.FirstOrDefault(c =>
+            c.Type == ClaimConstants.Permission &&
+            c.Value == roleClaimDto.ClaimValue);
+
+        if (matchedClaim is null)
+            return Result<string>.Failure("Claim not found for this role", ServiceErrorType.NotFound);
+
+        // Remove the claim from the role
+        var result = await _roleManager.RemoveClaimAsync(role, matchedClaim);
+        if (!result.Succeeded)
+            return Result<string>.Failure("Failed to remove claim", ServiceErrorType.DatabaseError);
+
+        return Result<string>.Success("Role claim removed successfully");
+    }
 }
