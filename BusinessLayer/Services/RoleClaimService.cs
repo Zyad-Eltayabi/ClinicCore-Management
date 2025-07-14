@@ -158,4 +158,33 @@ public class RoleClaimService : IRoleClaimService
 
         return Result<List<RoleClaimDto>>.Success(roleClaims);
     }
+
+    public async Task<Result<List<RoleClaimDto>>> GetClaimsByRoleId(string roleId)
+    {
+        // Validate roleId
+        if (string.IsNullOrWhiteSpace(roleId))
+            return Result<List<RoleClaimDto>>.Failure("Role ID is required", ServiceErrorType.ValidationError);
+
+        // Find role
+        var role = await _roleManager.FindByIdAsync(roleId);
+        if (role is null)
+            return Result<List<RoleClaimDto>>.Failure("Role not found", ServiceErrorType.NotFound);
+
+        // Get claims for this role
+        var claims = await _roleManager.GetClaimsAsync(role);
+
+        if (claims.Count == 0)
+            return Result<List<RoleClaimDto>>.Failure("No claims found for this role", ServiceErrorType.NotFound);
+
+        // Map claims to DTOs
+        var roleClaims = claims.Select(c => new RoleClaimDto
+        {
+            RoleId = role.Id,
+            RoleName = role.Name,
+            ClaimType = c.Type,
+            ClaimValue = c.Value
+        }).ToList();
+
+        return Result<List<RoleClaimDto>>.Success(roleClaims);
+    }
 }
