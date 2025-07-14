@@ -32,4 +32,21 @@ public class RoleClaimController : Controller
             _ => StatusCode((int)response.ErrorType, response.Message)
         };
     }
+
+    [HttpPut]
+    [Route("UpdateRoleClaim")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public async Task<ActionResult> UpdateRoleClaim([FromBody] UpdateRoleClaimDto roleClaimDto)
+    {
+        var response = await _roleClaimService.UpdateRoleClaim(roleClaimDto);
+        return response.ErrorType switch
+        {
+            ServiceErrorType.Success => Ok(response.Data),
+            _ => StatusCode((int)response.ErrorType, response.Message)
+        };
+    }
 }

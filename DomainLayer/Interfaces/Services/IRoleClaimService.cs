@@ -6,4 +6,5 @@ namespace DomainLayer.Interfaces.Services;
 public interface IRoleClaimService
 {
     Task<Result<string>> CreateRoleClaim(CreateRoleClaimDto roleClaimDto);
+    Task<Result<string>> UpdateRoleClaim(UpdateRoleClaimDto roleClaimDto);
 }
