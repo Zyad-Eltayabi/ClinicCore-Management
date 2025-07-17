@@ -1,3 +1,4 @@
+using DomainLayer.Constants;
 using DomainLayer.DTOs;
 using DomainLayer.Helpers;
 using DomainLayer.Interfaces.Services;
@@ -17,6 +18,7 @@ public class AppointmentController : ControllerBase
         _appointmentService = appointmentService;
     }
 
+    [Authorize(Policy = AuthorizationPolicies.CanCreateAppointment)]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -36,6 +38,7 @@ public class AppointmentController : ControllerBase
         };
     }
 
+    [Authorize(Policy = AuthorizationPolicies.CanRescheduleAppointment)]
     [HttpPut, Route("reschedule-appointment")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -55,12 +58,14 @@ public class AppointmentController : ControllerBase
         };
     }
 
+    [Authorize(Policy = AuthorizationPolicies.CanCancelAppointment)]
     [HttpPut, Route("cancel-appointment/{appointmentId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Authorize(Policy = AuthorizationPolicies.CanCompleteAppointment)]
     public async Task<IActionResult> CancelAppointment([FromRoute] int appointmentId)
     {
         var result = await _appointmentService.Cancel(appointmentId);
@@ -91,6 +96,7 @@ public class AppointmentController : ControllerBase
         };
     }
 
+    [Authorize(Policy = AuthorizationPolicies.CanViewAppointments)]
     [HttpGet]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -107,6 +113,7 @@ public class AppointmentController : ControllerBase
         };
     }
 
+    [Authorize(Policy = AuthorizationPolicies.CanViewAppointments)]
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

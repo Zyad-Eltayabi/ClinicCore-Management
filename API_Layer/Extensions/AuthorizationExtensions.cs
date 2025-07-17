@@ -33,6 +33,25 @@ public static class AuthorizationExtensions
 
             options.AddPolicy(AuthorizationPolicies.CanDeleteDoctor,
                 policy => policy.RequireClaim(ClaimConstants.Permission, ClaimConstants.DeleteDoctor));
+
+            // 🔹 Appointment-related Policies
+            options.AddPolicy(AuthorizationPolicies.CanViewAppointments,
+                policy => policy.RequireClaim(ClaimConstants.Permission, ClaimConstants.ViewAppointments));
+
+            options.AddPolicy(AuthorizationPolicies.CanCreateAppointment,
+                policy => policy.RequireClaim(ClaimConstants.Permission, ClaimConstants.CreateAppointment));
+
+            options.AddPolicy(AuthorizationPolicies.CanEditAppointment,
+                policy => policy.RequireClaim(ClaimConstants.Permission, ClaimConstants.EditAppointment));
+
+            options.AddPolicy(AuthorizationPolicies.CanCancelAppointment,
+                policy => policy.RequireClaim(ClaimConstants.Permission, ClaimConstants.CancelAppointment));
+
+            options.AddPolicy(AuthorizationPolicies.CanRescheduleAppointment,
+                policy => policy.RequireClaim(ClaimConstants.Permission, ClaimConstants.RescheduleAppointment));
+
+            options.AddPolicy(AuthorizationPolicies.CanCompleteAppointment,
+                policy => policy.RequireClaim(ClaimConstants.Permission, ClaimConstants.CompleteAppointment));
         });
 
         return services;

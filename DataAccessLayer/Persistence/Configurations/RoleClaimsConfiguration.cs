@@ -23,7 +23,14 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
             ClaimConstants.ViewDoctors,
             ClaimConstants.AddDoctor,
             ClaimConstants.EditDoctor,
-            ClaimConstants.DeleteDoctor
+            ClaimConstants.DeleteDoctor,
+
+            // 🔹 Appointment-related Claims
+            ClaimConstants.ViewAppointments,
+            ClaimConstants.CreateAppointment,
+            ClaimConstants.EditAppointment,
+            ClaimConstants.CancelAppointment,
+            ClaimConstants.CompleteAppointment
         });
 
         Roleclaims.Add(Roles.ClinicManager, new List<string>
@@ -38,7 +45,14 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
             ClaimConstants.ViewDoctors,
             ClaimConstants.AddDoctor,
             ClaimConstants.EditDoctor,
-            ClaimConstants.DeleteDoctor
+            ClaimConstants.DeleteDoctor,
+
+            // 🔹 Appointment-related Claims
+            ClaimConstants.ViewAppointments,
+            ClaimConstants.CreateAppointment,
+            ClaimConstants.EditAppointment,
+            ClaimConstants.CancelAppointment,
+            ClaimConstants.CompleteAppointment
         });
 
         Roleclaims.Add(Roles.Receptionist, new List<string>
@@ -49,7 +63,14 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
             ClaimConstants.ViewPatients,
 
             // 🔹 Doctor-related Claims
-            ClaimConstants.ViewDoctors
+            ClaimConstants.ViewDoctors,
+
+            // 🔹 Appointment-related Claims
+            ClaimConstants.ViewAppointments,
+            ClaimConstants.CreateAppointment,
+            ClaimConstants.EditAppointment,
+            ClaimConstants.CancelAppointment,
+            ClaimConstants.CompleteAppointment
         });
 
         Roleclaims.Add(Roles.MedicalAdmin, new List<string>
@@ -60,7 +81,10 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
             ClaimConstants.ViewPatients,
 
             // 🔹 Doctor-related Claims
-            ClaimConstants.ViewDoctors
+            ClaimConstants.ViewDoctors,
+
+            // 🔹 Appointment-related Claims
+            ClaimConstants.ViewAppointments
         });
     }
 }

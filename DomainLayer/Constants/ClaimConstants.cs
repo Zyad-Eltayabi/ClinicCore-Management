@@ -24,6 +24,7 @@ public class ClaimConstants
     public const string EditAppointment = "edit-appointment";
     public const string CancelAppointment = "cancel-appointment";
     public const string RescheduleAppointment = "reschedule-appointment";
+    public const string CompleteAppointment = "complete-appointment";
 
     // medical records claims
     public const string ViewMedicalRecords = "view-medical-records";
