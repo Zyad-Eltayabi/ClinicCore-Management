@@ -1,6 +1,8 @@
-﻿using DomainLayer.DTOs;
+﻿using DomainLayer.Constants;
+using DomainLayer.DTOs;
 using DomainLayer.Helpers;
 using DomainLayer.Interfaces.ServicesInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAPI.Controllers
@@ -16,6 +18,7 @@ namespace ClinicAPI.Controllers
             _patientService = patientService;
         }
 
+        [Authorize(Policy = AuthorizationPolicies.CanViewPatients)]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -29,6 +32,7 @@ namespace ClinicAPI.Controllers
             };
         }
 
+        [Authorize(Policy = AuthorizationPolicies.CanAddPatient)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -45,14 +49,14 @@ namespace ClinicAPI.Controllers
                 ServiceErrorType.ValidationError => BadRequest(result.Message),
 
                 ServiceErrorType.DatabaseError => StatusCode(StatusCodes.Status503ServiceUnavailable,
-                result.Message),
+                    result.Message),
 
                 _ => StatusCode(StatusCodes.Status500InternalServerError,
-                "An unexpected error occurred while processing your request")
+                    "An unexpected error occurred while processing your request")
             };
-
         }
 
+        [Authorize(Policy = AuthorizationPolicies.CanViewPatients)]
         [HttpGet, Route("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -68,6 +72,7 @@ namespace ClinicAPI.Controllers
             };
         }
 
+        [Authorize(Policy = AuthorizationPolicies.CanDeletePatient)]
         [HttpDelete, Route("{patientId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -81,12 +86,13 @@ namespace ClinicAPI.Controllers
                 ServiceErrorType.Success => Ok(),
                 ServiceErrorType.NotFound => NotFound(result.Message),
                 ServiceErrorType.DatabaseError => StatusCode(StatusCodes.Status503ServiceUnavailable,
-                result.Message),
+                    result.Message),
                 _ => StatusCode(StatusCodes.Status500InternalServerError,
-                result.Message)
+                    result.Message)
             };
         }
 
+        [Authorize(Policy = AuthorizationPolicies.CanEditPatient)]
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -102,9 +108,9 @@ namespace ClinicAPI.Controllers
                 ServiceErrorType.ValidationError => BadRequest(result.Message),
                 ServiceErrorType.NotFound => NotFound(result.Message),
                 ServiceErrorType.DatabaseError => StatusCode(StatusCodes.Status503ServiceUnavailable,
-                result.Message),
+                    result.Message),
                 _ => StatusCode(StatusCodes.Status500InternalServerError,
-                result.Message)
+                    result.Message)
             };
         }
     }
