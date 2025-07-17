@@ -27,4 +27,10 @@ public class AuthorizationPolicies
     public const string CanCreateMedicalRecord = "CanCreateMedicalRecord";
     public const string CanEditMedicalRecord = "CanEditMedicalRecord";
     public const string CanDeleteMedicalRecord = "CanDeleteMedicalRecord";
+
+    // 🔹 Prescription-related Policies
+    public const string CanViewPrescriptions = "CanViewPrescriptions";
+    public const string CanCreatePrescription = "CanCreatePrescription";
+    public const string CanEditPrescription = "CanEditPrescription";
+    public const string CanDeletePrescription = "CanDeletePrescription";
 }

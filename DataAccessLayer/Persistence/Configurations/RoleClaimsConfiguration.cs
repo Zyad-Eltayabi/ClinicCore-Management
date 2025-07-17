@@ -36,7 +36,13 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
             ClaimConstants.ViewMedicalRecords,
             ClaimConstants.CreateMedicalRecord,
             ClaimConstants.EditMedicalRecord,
-            ClaimConstants.DeleteMedicalRecord
+            ClaimConstants.DeleteMedicalRecord,
+
+            // 🔹 Prescription-related claims
+            ClaimConstants.ViewPrescriptions,
+            ClaimConstants.CreatePrescription,
+            ClaimConstants.EditPrescription,
+            ClaimConstants.DeletePrescription
         });
 
         Roleclaims.Add(Roles.ClinicManager, new List<string>
@@ -64,7 +70,13 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
             ClaimConstants.ViewMedicalRecords,
             ClaimConstants.CreateMedicalRecord,
             ClaimConstants.EditMedicalRecord,
-            ClaimConstants.DeleteMedicalRecord
+            ClaimConstants.DeleteMedicalRecord,
+
+            // 🔹 Prescription-related claims
+            ClaimConstants.ViewPrescriptions,
+            ClaimConstants.CreatePrescription,
+            ClaimConstants.EditPrescription,
+            ClaimConstants.DeletePrescription
         });
 
         Roleclaims.Add(Roles.Receptionist, new List<string>
@@ -85,7 +97,10 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
             ClaimConstants.CompleteAppointment,
 
             // 🔹 medical-record related claims
-            ClaimConstants.ViewMedicalRecords
+            ClaimConstants.ViewMedicalRecords,
+
+            // 🔹 Prescription-related claims
+            ClaimConstants.ViewPrescriptions
         });
 
         Roleclaims.Add(Roles.MedicalAdmin, new List<string>
@@ -104,7 +119,12 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
             // 🔹 medical-record related claims
             ClaimConstants.ViewMedicalRecords,
             ClaimConstants.CreateMedicalRecord,
-            ClaimConstants.EditMedicalRecord
+            ClaimConstants.EditMedicalRecord,
+
+            // 🔹 Prescription-related claims
+            ClaimConstants.ViewPrescriptions,
+            ClaimConstants.CreatePrescription,
+            ClaimConstants.EditPrescription
         });
     }
 }

@@ -1,7 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
+using DomainLayer.Constants;
 using DomainLayer.DTOs;
-using DomainLayer.Interfaces.Services;
 using DomainLayer.Helpers;
+using DomainLayer.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAPI.Controllers;
 
@@ -16,29 +18,33 @@ public class PrescriptionController : ControllerBase
         _prescriptionService = prescriptionService;
     }
 
+    [Authorize(Policy = AuthorizationPolicies.CanCreatePrescription)]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<Result<CreateOrUpdatePrescriptionDto>>> Add([FromBody] CreateOrUpdatePrescriptionDto prescriptionDto)
+    public async Task<ActionResult<Result<CreateOrUpdatePrescriptionDto>>> Add(
+        [FromBody] CreateOrUpdatePrescriptionDto prescriptionDto)
     {
         var result = await _prescriptionService.Add(prescriptionDto);
         return result.ErrorType switch
         {
             ServiceErrorType.Success => CreatedAtAction(nameof(Add), result.Data),
-            _ => StatusCode((int)result.ErrorType,result.Message)
+            _ => StatusCode((int)result.ErrorType, result.Message)
         };
     }
-    
+
+    [Authorize(Policy = AuthorizationPolicies.CanEditPrescription)]
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<Result<CreateOrUpdatePrescriptionDto>>> Update([FromBody] CreateOrUpdatePrescriptionDto prescriptionDto)
+    public async Task<ActionResult<Result<CreateOrUpdatePrescriptionDto>>> Update(
+        [FromBody] CreateOrUpdatePrescriptionDto prescriptionDto)
     {
         var result = await _prescriptionService.Update(prescriptionDto);
         return result.ErrorType switch
@@ -48,7 +54,7 @@ public class PrescriptionController : ControllerBase
         };
     }
 
-
+    [Authorize(Policy = AuthorizationPolicies.CanViewPrescriptions)]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -63,7 +69,8 @@ public class PrescriptionController : ControllerBase
             _ => StatusCode((int)result.ErrorType, result.Message)
         };
     }
-    
+
+    [Authorize(Policy = AuthorizationPolicies.CanViewPrescriptions)]
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -78,7 +85,8 @@ public class PrescriptionController : ControllerBase
             _ => StatusCode((int)result.ErrorType, result.Message)
         };
     }
-    
+
+    [Authorize(Policy = AuthorizationPolicies.CanDeletePrescription)]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -93,5 +101,4 @@ public class PrescriptionController : ControllerBase
             _ => StatusCode((int)result.ErrorType, result.Message)
         };
     }
-    
 }

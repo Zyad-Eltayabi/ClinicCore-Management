@@ -65,6 +65,19 @@ public static class AuthorizationExtensions
 
             options.AddPolicy(AuthorizationPolicies.CanDeleteMedicalRecord,
                 policy => policy.RequireClaim(ClaimConstants.Permission, ClaimConstants.DeleteMedicalRecord));
+
+            // 🔹 Prescription-related Policies
+            options.AddPolicy(AuthorizationPolicies.CanViewPrescriptions,
+                policy => policy.RequireClaim(ClaimConstants.Permission, ClaimConstants.ViewPrescriptions));
+
+            options.AddPolicy(AuthorizationPolicies.CanCreatePrescription,
+                policy => policy.RequireClaim(ClaimConstants.Permission, ClaimConstants.CreatePrescription));
+
+            options.AddPolicy(AuthorizationPolicies.CanEditPrescription,
+                policy => policy.RequireClaim(ClaimConstants.Permission, ClaimConstants.EditPrescription));
+
+            options.AddPolicy(AuthorizationPolicies.CanDeletePrescription,
+                policy => policy.RequireClaim(ClaimConstants.Permission, ClaimConstants.DeletePrescription));
         });
 
         return services;
