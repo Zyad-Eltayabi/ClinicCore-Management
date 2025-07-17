@@ -13,32 +13,54 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
 
         Roleclaims.Add(Roles.SuperAdmin, new List<string>
         {
+            // 🔹 Patient-related Claims
             ClaimConstants.AddPatient,
             ClaimConstants.EditPatient,
             ClaimConstants.DeletePatient,
-            ClaimConstants.ViewPatients
+            ClaimConstants.ViewPatients,
+
+            // 🔹 Doctor-related Claims
+            ClaimConstants.ViewDoctors,
+            ClaimConstants.AddDoctor,
+            ClaimConstants.EditDoctor,
+            ClaimConstants.DeleteDoctor
         });
 
         Roleclaims.Add(Roles.ClinicManager, new List<string>
         {
+            // 🔹 Patient-related Claims
             ClaimConstants.AddPatient,
             ClaimConstants.EditPatient,
             ClaimConstants.DeletePatient,
-            ClaimConstants.ViewPatients
+            ClaimConstants.ViewPatients,
+
+            // 🔹 Doctor-related Claims
+            ClaimConstants.ViewDoctors,
+            ClaimConstants.AddDoctor,
+            ClaimConstants.EditDoctor,
+            ClaimConstants.DeleteDoctor
         });
 
         Roleclaims.Add(Roles.Receptionist, new List<string>
         {
+            // 🔹 Patient-related Claims
             ClaimConstants.AddPatient,
             ClaimConstants.EditPatient,
-            ClaimConstants.ViewPatients
+            ClaimConstants.ViewPatients,
+
+            // 🔹 Doctor-related Claims
+            ClaimConstants.ViewDoctors
         });
 
         Roleclaims.Add(Roles.MedicalAdmin, new List<string>
         {
+            // 🔹 Patient-related Claims
             ClaimConstants.AddPatient,
             ClaimConstants.EditPatient,
-            ClaimConstants.ViewPatients
+            ClaimConstants.ViewPatients,
+
+            // 🔹 Doctor-related Claims
+            ClaimConstants.ViewDoctors
         });
     }
 }
