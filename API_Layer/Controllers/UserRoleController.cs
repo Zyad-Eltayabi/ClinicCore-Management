@@ -1,12 +1,15 @@
+using DomainLayer.Constants;
 using DomainLayer.DTOs;
 using DomainLayer.Helpers;
 using DomainLayer.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Roles = Roles.SuperAdmin)]
 public class UserRoleController : ControllerBase
 {
     private readonly IUserRoleService _userRoleService;

@@ -1,5 +1,7 @@
-﻿using DomainLayer.DTOs;
+﻿using DomainLayer.Constants;
+using DomainLayer.DTOs;
 using DomainLayer.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAPI.Controllers
@@ -15,6 +17,7 @@ namespace ClinicAPI.Controllers
             _authService = authService;
         }
 
+        [Authorize(Roles = Roles.SuperAdmin)]
         [HttpPost]
         [Route("Register")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -33,6 +36,7 @@ namespace ClinicAPI.Controllers
             return Ok(response);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Route("Login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -61,7 +65,8 @@ namespace ClinicAPI.Controllers
             Response.Cookies.Append("RefreshToken", token, cookieOptions);
         }
 
-        [HttpGet]
+        [AllowAnonymous]
+        [HttpPost]
         [Route("RefreshToken")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -79,6 +84,7 @@ namespace ClinicAPI.Controllers
             return Ok(response);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Route("RevokeToken")]
         [ProducesResponseType(StatusCodes.Status200OK)]

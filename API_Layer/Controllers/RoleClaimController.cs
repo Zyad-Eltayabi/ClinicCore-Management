@@ -1,12 +1,15 @@
+using DomainLayer.Constants;
 using DomainLayer.DTOs;
 using DomainLayer.Helpers;
 using DomainLayer.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Roles = Roles.SuperAdmin)]
 public class RoleClaimController : Controller
 {
     private readonly IRoleClaimService _roleClaimService;
@@ -15,6 +18,7 @@ public class RoleClaimController : Controller
     {
         _roleClaimService = roleClaimService;
     }
+
 
     [HttpPost]
     [Route("CreateRoleClaim")]

@@ -7,6 +7,7 @@ builder.Services
     .AddApiServices()
     .AddDbServices(builder.Configuration)
     .AddIdentityServices(builder.Configuration)
+    .AddAuthorizationPolicies()
     .AddAppServices()
     .AddAutoMapper(typeof(MappingProfile));
 
