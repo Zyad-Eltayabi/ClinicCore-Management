@@ -22,7 +22,7 @@ public class UserRoleController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> AddUserToRole([FromQuery] UserRoleDto userRoleDto)
+    public async Task<IActionResult> AddUserToRole([FromBody] UserRoleDto userRoleDto)
     {
         var result = await _userRoleService.AddUserToRole(userRoleDto);
         return result.ErrorType switch
@@ -38,7 +38,7 @@ public class UserRoleController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> RemoveUserFromRole([FromQuery] UserRoleDto userRoleDto)
+    public async Task<IActionResult> RemoveUserFromRole([FromBody] UserRoleDto userRoleDto)
     {
         var result = await _userRoleService.RemoveUserFromRole(userRoleDto);
         return result.ErrorType switch
