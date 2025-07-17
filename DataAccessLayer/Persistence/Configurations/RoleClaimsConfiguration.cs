@@ -42,7 +42,11 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
             ClaimConstants.ViewPrescriptions,
             ClaimConstants.CreatePrescription,
             ClaimConstants.EditPrescription,
-            ClaimConstants.DeletePrescription
+            ClaimConstants.DeletePrescription,
+
+            // 🔹 Payment-related claims
+            ClaimConstants.ViewPayments,
+            ClaimConstants.ProcessPayment
         });
 
         Roleclaims.Add(Roles.ClinicManager, new List<string>
@@ -76,7 +80,11 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
             ClaimConstants.ViewPrescriptions,
             ClaimConstants.CreatePrescription,
             ClaimConstants.EditPrescription,
-            ClaimConstants.DeletePrescription
+            ClaimConstants.DeletePrescription,
+
+            // 🔹 Payment-related claims
+            ClaimConstants.ViewPayments,
+            ClaimConstants.ProcessPayment
         });
 
         Roleclaims.Add(Roles.Receptionist, new List<string>
@@ -100,7 +108,11 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
             ClaimConstants.ViewMedicalRecords,
 
             // 🔹 Prescription-related claims
-            ClaimConstants.ViewPrescriptions
+            ClaimConstants.ViewPrescriptions,
+
+            // 🔹 Payment-related claims
+            ClaimConstants.ViewPayments,
+            ClaimConstants.ProcessPayment
         });
 
         Roleclaims.Add(Roles.MedicalAdmin, new List<string>

@@ -78,6 +78,13 @@ public static class AuthorizationExtensions
 
             options.AddPolicy(AuthorizationPolicies.CanDeletePrescription,
                 policy => policy.RequireClaim(ClaimConstants.Permission, ClaimConstants.DeletePrescription));
+
+            // 🔹 payment-related Policies
+            options.AddPolicy(AuthorizationPolicies.CanViewPayments,
+                policy => policy.RequireClaim(ClaimConstants.Permission, ClaimConstants.ViewPayments));
+
+            options.AddPolicy(AuthorizationPolicies.CanProcessPayment,
+                policy => policy.RequireClaim(ClaimConstants.Permission, ClaimConstants.ProcessPayment));
         });
 
         return services;

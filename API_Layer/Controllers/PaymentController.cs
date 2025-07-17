@@ -1,6 +1,8 @@
+using DomainLayer.Constants;
 using DomainLayer.DTOs;
 using DomainLayer.Helpers;
 using DomainLayer.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAPI.Controllers;
@@ -15,6 +17,8 @@ public class PaymentController : ControllerBase
     {
         _paymentService = paymentService;
     }
+
+    [Authorize(Policy = AuthorizationPolicies.CanViewPayments)]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -29,7 +33,8 @@ public class PaymentController : ControllerBase
             _ => StatusCode((int)payments.ErrorType, payments.Message)
         };
     }
-    
+
+    [Authorize(Policy = AuthorizationPolicies.CanViewPayments)]
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -44,7 +49,8 @@ public class PaymentController : ControllerBase
             _ => StatusCode((int)payment.ErrorType, payment.Message)
         };
     }
-    
+
+    [Authorize(Policy = AuthorizationPolicies.CanProcessPayment)]
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

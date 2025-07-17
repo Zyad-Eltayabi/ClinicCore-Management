@@ -33,4 +33,8 @@ public class AuthorizationPolicies
     public const string CanCreatePrescription = "CanCreatePrescription";
     public const string CanEditPrescription = "CanEditPrescription";
     public const string CanDeletePrescription = "CanDeletePrescription";
+
+    // 🔹 Payment-related Policies
+    public const string CanViewPayments = "CanViewPayments";
+    public const string CanProcessPayment = "CanProcessPayment";
 }
