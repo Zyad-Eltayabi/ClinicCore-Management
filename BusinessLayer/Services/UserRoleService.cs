@@ -43,6 +43,25 @@ public class UserRoleService : IUserRoleService
 
     public async Task<Result<string>> RemoveUserFromRole(UserRoleDto userRoleDto)
     {
-        throw new NotImplementedException();
+        // check if user exists
+        var user = await _userManager.FindByIdAsync(userRoleDto.UserId);
+        if (user is null)
+            return Result<string>.Failure("User not found", ServiceErrorType.NotFound);
+
+        // check if role exists
+        var role = await _roleManager.FindByIdAsync(userRoleDto.RoleId);
+        if (role is null)
+            return Result<string>.Failure("Role not found", ServiceErrorType.NotFound);
+
+        // check if user is already in the role
+        var isInRole = await _userManager.IsInRoleAsync(user, role.Name);
+        if (!isInRole)
+            return Result<string>.Failure("User is not in the role", ServiceErrorType.ValidationError);
+
+        // remove user from role
+        var result = await _userManager.RemoveFromRoleAsync(user, role.Name);
+        return result.Succeeded
+            ? Result<string>.Success("User removed from role successfully")
+            : Result<string>.Failure("Failed to remove user from role", ServiceErrorType.DatabaseError);
     }
 }

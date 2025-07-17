@@ -17,9 +17,30 @@ public class UserRoleController : ControllerBase
     }
 
     [HttpGet("AddUserToRole")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> AddUserToRole([FromQuery] UserRoleDto userRoleDto)
     {
         var result = await _userRoleService.AddUserToRole(userRoleDto);
+        return result.ErrorType switch
+        {
+            ServiceErrorType.Success => Ok(result.Data),
+            _ => StatusCode((int)result.ErrorType, result.Message)
+        };
+    }
+
+    [HttpGet("RemoveUserFromRole")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> RemoveUserFromRole([FromQuery] UserRoleDto userRoleDto)
+    {
+        var result = await _userRoleService.RemoveUserFromRole(userRoleDto);
         return result.ErrorType switch
         {
             ServiceErrorType.Success => Ok(result.Data),
