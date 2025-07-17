@@ -16,7 +16,7 @@ public class UserRoleController : ControllerBase
         _userRoleService = userRoleService;
     }
 
-    [HttpGet("AddUserToRole")]
+    [HttpPost("AddUserToRole")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -32,7 +32,7 @@ public class UserRoleController : ControllerBase
         };
     }
 
-    [HttpGet("RemoveUserFromRole")]
+    [HttpDelete("RemoveUserFromRole")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
