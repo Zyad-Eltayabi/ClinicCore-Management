@@ -30,6 +30,7 @@ public class ClaimConstants
     public const string ViewMedicalRecords = "view-medical-records";
     public const string CreateMedicalRecord = "create-medical-record";
     public const string EditMedicalRecord = "edit-medical-record";
+    public const string DeleteMedicalRecord = "delete-medical-record";
 
     // prescriptions claims
     public const string ViewPrescriptions = "view-prescriptions";

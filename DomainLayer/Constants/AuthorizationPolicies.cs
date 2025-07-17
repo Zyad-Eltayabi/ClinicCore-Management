@@ -21,4 +21,10 @@ public class AuthorizationPolicies
     public const string CanCancelAppointment = "CanCancelAppointment";
     public const string CanRescheduleAppointment = "CanRescheduleAppointment";
     public const string CanCompleteAppointment = "CanCompleteAppointment";
+
+    // 🔹 MedicalRecord-related Policies
+    public const string CanViewMedicalRecords = "CanViewMedicalRecords";
+    public const string CanCreateMedicalRecord = "CanCreateMedicalRecord";
+    public const string CanEditMedicalRecord = "CanEditMedicalRecord";
+    public const string CanDeleteMedicalRecord = "CanDeleteMedicalRecord";
 }

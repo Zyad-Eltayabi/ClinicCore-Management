@@ -30,7 +30,13 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
             ClaimConstants.CreateAppointment,
             ClaimConstants.EditAppointment,
             ClaimConstants.CancelAppointment,
-            ClaimConstants.CompleteAppointment
+            ClaimConstants.CompleteAppointment,
+
+            // 🔹 medical-record related claims
+            ClaimConstants.ViewMedicalRecords,
+            ClaimConstants.CreateMedicalRecord,
+            ClaimConstants.EditMedicalRecord,
+            ClaimConstants.DeleteMedicalRecord
         });
 
         Roleclaims.Add(Roles.ClinicManager, new List<string>
@@ -52,7 +58,13 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
             ClaimConstants.CreateAppointment,
             ClaimConstants.EditAppointment,
             ClaimConstants.CancelAppointment,
-            ClaimConstants.CompleteAppointment
+            ClaimConstants.CompleteAppointment,
+
+            // 🔹 medical-record related claims
+            ClaimConstants.ViewMedicalRecords,
+            ClaimConstants.CreateMedicalRecord,
+            ClaimConstants.EditMedicalRecord,
+            ClaimConstants.DeleteMedicalRecord
         });
 
         Roleclaims.Add(Roles.Receptionist, new List<string>
@@ -70,7 +82,10 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
             ClaimConstants.CreateAppointment,
             ClaimConstants.EditAppointment,
             ClaimConstants.CancelAppointment,
-            ClaimConstants.CompleteAppointment
+            ClaimConstants.CompleteAppointment,
+
+            // 🔹 medical-record related claims
+            ClaimConstants.ViewMedicalRecords
         });
 
         Roleclaims.Add(Roles.MedicalAdmin, new List<string>
@@ -84,7 +99,12 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
             ClaimConstants.ViewDoctors,
 
             // 🔹 Appointment-related Claims
-            ClaimConstants.ViewAppointments
+            ClaimConstants.ViewAppointments,
+
+            // 🔹 medical-record related claims
+            ClaimConstants.ViewMedicalRecords,
+            ClaimConstants.CreateMedicalRecord,
+            ClaimConstants.EditMedicalRecord
         });
     }
 }
