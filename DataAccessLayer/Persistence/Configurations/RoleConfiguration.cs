@@ -13,31 +13,31 @@ public class RoleConfiguration : IEntityTypeConfiguration<IdentityRole>
             {
                 new()
                 {
-                    Id = Guid.NewGuid().ToString(),
+                    Id = "d1f488a3-6730-47cb-a0e1-aaa2342a1bc1",
                     Name = "SuperAdmin",
-                    NormalizedName = "SuperAdmin".ToUpper(),
-                    ConcurrencyStamp = Guid.NewGuid().ToString()
+                    NormalizedName = "SUPERADMIN",
+                    ConcurrencyStamp = "cf7c214e-6bc4-4ef5-9cd6-111122223333"
                 },
                 new()
                 {
-                    Id = Guid.NewGuid().ToString(),
+                    Id = "f6a822c6-2ad8-4d32-a0d1-eee23453bc22",
                     Name = "ClinicManager",
-                    NormalizedName = "ClinicManager".ToUpper(),
-                    ConcurrencyStamp = Guid.NewGuid().ToString()
+                    NormalizedName = "CLINICMANAGER",
+                    ConcurrencyStamp = "442899dd-c394-4a76-87f0-222233334444"
                 },
                 new()
                 {
-                    Id = Guid.NewGuid().ToString(),
+                    Id = "aa19c2e5-3de4-471e-a31e-bbb344567899",
                     Name = "MedicalAdmin",
-                    NormalizedName = "MedicalAdmin".ToUpper(),
-                    ConcurrencyStamp = Guid.NewGuid().ToString()
+                    NormalizedName = "MEDICALADMIN",
+                    ConcurrencyStamp = "efcc233c-cffa-4777-8d15-333344445555"
                 },
                 new()
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    Name = "Receptionist ",
-                    NormalizedName = "Receptionist ".ToUpper(),
-                    ConcurrencyStamp = Guid.NewGuid().ToString()
+                    Id = "bb95a2dc-cba4-4fcb-9432-ccc455667788",
+                    Name = "Receptionist",
+                    NormalizedName = "RECEPTIONIST",
+                    ConcurrencyStamp = "aaad1111-bbdd-4567-ae88-444455556666"
                 }
             });
     }

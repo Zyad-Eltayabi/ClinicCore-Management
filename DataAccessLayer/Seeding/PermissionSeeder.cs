@@ -1,14 +1,29 @@
+using System.Security.Claims;
+using DataAccessLayer.Persistence;
 using DomainLayer.Constants;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DataAccessLayer.Persistence.Configurations;
+namespace DataAccessLayer.Seeding;
 
-public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClaim<string>>
+public class PermissionSeeder
 {
-    public void Configure(EntityTypeBuilder<IdentityRoleClaim<string>> builder)
+    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly ApplicationDbContext _dbContext;
+
+    public PermissionSeeder(ApplicationDbContext dbContext, RoleManager<IdentityRole> roleManager)
     {
+        _dbContext = dbContext;
+        _roleManager = roleManager;
+    }
+
+    public async Task SeedAsync()
+    {
+        // check if any claims exist
+        var hasClaims = await _dbContext.Set<IdentityRoleClaim<string>>().AnyAsync();
+        if (hasClaims)
+            return;
+
         var Roleclaims = new Dictionary<string, List<string>>();
 
         Roleclaims.Add(Roles.SuperAdmin, new List<string>
@@ -138,5 +153,14 @@ public class RoleClaimsConfiguration : IEntityTypeConfiguration<IdentityRoleClai
             ClaimConstants.CreatePrescription,
             ClaimConstants.EditPrescription
         });
+
+        // seed data into database
+        foreach (var roleName in Roleclaims.Keys)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+            if (role is not null)
+                foreach (var claim in Roleclaims[roleName])
+                    await _roleManager.AddClaimAsync(role, new Claim(ClaimConstants.Permission, claim));
+        }
     }
 }
