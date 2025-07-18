@@ -7,7 +7,7 @@
 namespace DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class SeedDefaultRoles : Migration
+    public partial class SeedRolesFixed : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,10 +17,10 @@ namespace DataAccessLayer.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "3eb9590e-d019-4191-beee-29056960db7b", "6758d1a9-b871-4b5d-934f-a9bb7e199700", "MedicalAdmin", "MEDICALADMIN" },
-                    { "a830e884-bf5a-4c4b-96d6-9bd84ee22405", "8cfca4d5-c605-4739-8f9e-2a6209df66e0", "Receptionist ", "RECEPTIONIST " },
-                    { "e2b4238e-5145-4729-97b7-222f2168a84b", "77d9ae83-3e99-43a8-9466-4426092b1d06", "SuperAdmin", "SUPERADMIN" },
-                    { "f4ca3253-89c5-4b8b-ad4b-dabae4c67d15", "d8a57416-ddf1-4ec1-b051-1f4884b9be59", "ClinicManager", "CLINICMANAGER" }
+                    { "aa19c2e5-3de4-471e-a31e-bbb344567899", "efcc233c-cffa-4777-8d15-333344445555", "MedicalAdmin", "MEDICALADMIN" },
+                    { "bb95a2dc-cba4-4fcb-9432-ccc455667788", "aaad1111-bbdd-4567-ae88-444455556666", "Receptionist", "RECEPTIONIST" },
+                    { "d1f488a3-6730-47cb-a0e1-aaa2342a1bc1", "cf7c214e-6bc4-4ef5-9cd6-111122223333", "SuperAdmin", "SUPERADMIN" },
+                    { "f6a822c6-2ad8-4d32-a0d1-eee23453bc22", "442899dd-c394-4a76-87f0-222233334444", "ClinicManager", "CLINICMANAGER" }
                 });
         }
 
@@ -30,22 +30,22 @@ namespace DataAccessLayer.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "3eb9590e-d019-4191-beee-29056960db7b");
+                keyValue: "aa19c2e5-3de4-471e-a31e-bbb344567899");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "a830e884-bf5a-4c4b-96d6-9bd84ee22405");
+                keyValue: "bb95a2dc-cba4-4fcb-9432-ccc455667788");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "e2b4238e-5145-4729-97b7-222f2168a84b");
+                keyValue: "d1f488a3-6730-47cb-a0e1-aaa2342a1bc1");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "f4ca3253-89c5-4b8b-ad4b-dabae4c67d15");
+                keyValue: "f6a822c6-2ad8-4d32-a0d1-eee23453bc22");
         }
     }
 }

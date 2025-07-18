@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250713182735_SeedDefaultRoles")]
-    partial class SeedDefaultRoles
+    [Migration("20250718142807_SeedRolesFixed")]
+    partial class SeedRolesFixed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -390,31 +390,31 @@ namespace DataAccessLayer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "e2b4238e-5145-4729-97b7-222f2168a84b",
-                            ConcurrencyStamp = "77d9ae83-3e99-43a8-9466-4426092b1d06",
+                            Id = "d1f488a3-6730-47cb-a0e1-aaa2342a1bc1",
+                            ConcurrencyStamp = "cf7c214e-6bc4-4ef5-9cd6-111122223333",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
-                            Id = "f4ca3253-89c5-4b8b-ad4b-dabae4c67d15",
-                            ConcurrencyStamp = "d8a57416-ddf1-4ec1-b051-1f4884b9be59",
+                            Id = "f6a822c6-2ad8-4d32-a0d1-eee23453bc22",
+                            ConcurrencyStamp = "442899dd-c394-4a76-87f0-222233334444",
                             Name = "ClinicManager",
                             NormalizedName = "CLINICMANAGER"
                         },
                         new
                         {
-                            Id = "3eb9590e-d019-4191-beee-29056960db7b",
-                            ConcurrencyStamp = "6758d1a9-b871-4b5d-934f-a9bb7e199700",
+                            Id = "aa19c2e5-3de4-471e-a31e-bbb344567899",
+                            ConcurrencyStamp = "efcc233c-cffa-4777-8d15-333344445555",
                             Name = "MedicalAdmin",
                             NormalizedName = "MEDICALADMIN"
                         },
                         new
                         {
-                            Id = "a830e884-bf5a-4c4b-96d6-9bd84ee22405",
-                            ConcurrencyStamp = "8cfca4d5-c605-4739-8f9e-2a6209df66e0",
-                            Name = "Receptionist ",
-                            NormalizedName = "RECEPTIONIST "
+                            Id = "bb95a2dc-cba4-4fcb-9432-ccc455667788",
+                            ConcurrencyStamp = "aaad1111-bbdd-4567-ae88-444455556666",
+                            Name = "Receptionist",
+                            NormalizedName = "RECEPTIONIST"
                         });
                 });
 
