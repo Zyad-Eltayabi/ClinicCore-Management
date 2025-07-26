@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using Serilog.Context;
 
 public class LoggingAsyncMiddleware : IMiddleware
 {
@@ -126,7 +127,10 @@ public class LoggingAsyncMiddleware : IMiddleware
         };
 
         // Log the request information
-        _logger.LogInformation("HTTP Request: {@RequestInfo}", requestInfo);
+        using (LogContext.PushProperty("UniqueId", correlationId))
+        {
+            _logger.LogInformation("HTTP Request: {@RequestInfo}", requestInfo);
+        }
 
         // Store correlation ID in HttpContext for later use
         context.Items["CorrelationId"] = correlationId;
@@ -176,7 +180,10 @@ public class LoggingAsyncMiddleware : IMiddleware
 
         // Log with appropriate level based on status code
         var logLevel = GetLogLevel(response.StatusCode, exception);
-        _logger.Log(logLevel, "HTTP Response: {@ResponseInfo}", responseInfo);
+        using (LogContext.PushProperty("UniqueId", correlationId))
+        {
+            _logger.Log(logLevel, "HTTP Response: {@ResponseInfo}", responseInfo);
+        }
     }
 
     private string GetClientIpAddress(HttpContext context)
@@ -292,26 +299,37 @@ public class LoggingAsyncMiddleware : IMiddleware
         }
     }
 
-    private object? FormatBodyForLogging(string? body, string? contentType)
+    private string? FormatBodyForLogging(string? body, string? contentType)
     {
-        if (string.IsNullOrEmpty(body)) return null;
+        if (string.IsNullOrWhiteSpace(body)) return null;
 
-        // Try to parse as JSON for better formatting
         if (IsJsonContent(contentType))
+        {
             try
             {
                 using var jsonDoc = JsonDocument.Parse(body);
-                return jsonDoc.RootElement.Clone(); // Clone to avoid disposal issues
+                return JsonSerializer.Serialize(jsonDoc.RootElement, new JsonSerializerOptions
+                {
+                    WriteIndented = false
+                });
             }
             catch (JsonException)
             {
-                // If JSON parsing fails, return as string
-                return body;
+                return "[Invalid JSON]";
             }
+        }
 
-        // For other content types, return as string
-        return body;
+        if (contentType?.Contains("application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase) == true)
+            return Uri.UnescapeDataString(body);
+
+        if (contentType?.Contains("multipart/form-data", StringComparison.OrdinalIgnoreCase) == true)
+            return "[Multipart/form-data content omitted]";
+
+        return body.Length > _maxRequestBodySize
+            ? $"[Truncated Body: {body.Substring(0, _maxRequestBodySize)}...]"
+            : body;
     }
+
 
     private bool IsJsonContent(string? contentType)
     {
