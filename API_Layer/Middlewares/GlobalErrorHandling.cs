@@ -1,8 +1,7 @@
-﻿using System.Net;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Serilog.Context;
 
 namespace ClinicAPI.Middlewares
 {
@@ -19,7 +18,10 @@ namespace ClinicAPI.Middlewares
             Exception exception,
             CancellationToken cancellationToken)
         {
-            _logger.LogCritical(exception, exception.Message);
+            using (LogContext.PushProperty("UniqueId", "Request Failed"))
+            {
+                _logger.LogCritical(exception, exception.Message);
+            }
 
             var details = new ProblemDetails()
             {

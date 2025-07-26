@@ -2,7 +2,7 @@
 using ClinicAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.UseSerilogRequestLogging();
 builder.Services
     .AddApiServices()
     .AddDbServices(builder.Configuration)
