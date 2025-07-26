@@ -9,10 +9,10 @@ builder.Services
     .AddIdentityServices(builder.Configuration)
     .AddAuthorizationPolicies()
     .AddAppServices()
-    .AddAutoMapper(typeof(MappingProfile));
+    .AddAutoMapper(typeof(MappingProfile))
+    .AddLoggingService();
 
-var app = builder.Build();
+var app = await builder.Build().UseApiConfiguration();
 
-app.UseApiConfiguration();
 
-app.Run();
+await app.RunAsync();

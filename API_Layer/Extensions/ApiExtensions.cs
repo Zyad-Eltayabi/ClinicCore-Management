@@ -51,6 +51,7 @@ public static class ApiExtensions
 
         app.UseExceptionHandler();
         app.UseHttpsRedirection();
+        app.UseMiddleware<LoggingAsyncMiddleware>();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
