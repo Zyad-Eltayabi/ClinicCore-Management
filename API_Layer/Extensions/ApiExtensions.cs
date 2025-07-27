@@ -14,7 +14,7 @@ public static class ApiExtensions
     {
         services.AddControllers();
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(SwaggerExtensions.Options());
         services.AddFluentValidationRulesToSwagger();
         services.AddExceptionHandler<GlobalErrorHandling>();
         services.AddProblemDetails();
@@ -26,7 +26,7 @@ public static class ApiExtensions
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(SwaggerExtensions.UiOptions());
         }
 
         // Seeding default role claims data to database
