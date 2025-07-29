@@ -219,10 +219,53 @@ public class RoleClaimController : Controller
         };
     }
 
+    /// <summary>
+    ///     Retrieves all role-claim assignments in the system.
+    /// </summary>
+    /// <remarks>
+    ///     ### Business Rules:
+    ///     - Only authorized users can access this endpoint
+    ///     - Returns all role-claim mappings in the system
+    ///     - Returns empty list if no role claims exist (status 200)
+    ///     ### Success Response Example:
+    ///     ```json
+    ///     [
+    ///     {
+    ///     "roleId": "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
+    ///     "roleName": "Administrator",
+    ///     "claimType": "Permission",
+    ///     "claimValue": "documents.manage"
+    ///     },
+    ///     {
+    ///     "roleId": "b2c3d4e5-f6g7-8901-h2i3-j4k5l6m7n8o9",
+    ///     "roleName": "Editor",
+    ///     "claimType": "Permission",
+    ///     "claimValue": "documents.edit"
+    ///     }
+    ///     ]
+    ///     ```
+    ///     ### Error Response Examples:
+    ///     **No Roles Found (404):**
+    ///     ```json
+    ///     "No roles found"
+    ///     ```
+    ///     **No Role Claims Found (404):**
+    ///     ```json
+    ///     "No role claims found"
+    ///     ```
+    ///     **Server Error (500):**
+    ///     ```json
+    ///     "An error occurred while retrieving role claims"
+    ///     ```
+    /// </remarks>
+    /// <response code="200">Returns list of all role-claim assignments</response>
+    /// <response code="401">If user is not authenticated</response>
+    /// <response code="403">If user lacks required permissions</response>
+    /// <response code="404">If no roles or role claims exist</response>
+    /// <response code="500">If there was an internal server error</response>
     [HttpGet("GetAllRoleClaims")]
     [ProducesResponseType(typeof(List<RoleClaimDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<List<RoleClaimDto>>> GetAllRoleClaims()
     {
         var response = await _roleClaimService.GetAllRoleClaims();
@@ -234,11 +277,65 @@ public class RoleClaimController : Controller
         };
     }
 
-    [HttpGet("GetClaimsByRoleId/{roleId}")]
+    /// <summary>
+    ///     Retrieves all claims assigned to a specific role.
+    /// </summary>
+    /// <remarks>
+    ///     ### Business Rules:
+    ///     - Requires valid role ID in GUID format
+    ///     - Role must exist in the system
+    ///     - Returns empty list if role exists but has no claims (status 200)
+    ///     - Only accessible by authorized users with appropriate permissions
+    ///     ### Sample Request:
+    ///     `GET /api/role-claims/get-claims-by-role-id/a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8`
+    ///     ### Success Response Example:
+    ///     ```json
+    ///     [
+    ///     {
+    ///     "roleId": "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
+    ///     "roleName": "Admin",
+    ///     "claimType": "Permission",
+    ///     "claimValue": "view-doctors"
+    ///     },
+    ///     {
+    ///     "roleId": "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
+    ///     "roleName": "Admin",
+    ///     "claimType": "Permission",
+    ///     "claimValue": "delete-doctors"
+    ///     }
+    ///     ]
+    ///     ```
+    ///     ### Empty Success Response:
+    ///     ```json
+    ///     []
+    ///     ```
+    ///     ### Error Response Examples:
+    ///     **Validation Error (400):**
+    ///     ```json
+    ///     "Role ID is required"
+    ///     ```
+    ///     **Role Not Found (404):**
+    ///     ```json
+    ///     "Role not found"
+    ///     ```
+    ///     **No Claims Found (404):**
+    ///     Returns empty array (considered success case)
+    ///     **Server Error (500):**
+    ///     ```json
+    ///     "An error occurred while retrieving role claims"
+    ///     ```
+    /// </remarks>
+    /// <param name="roleId">The ID of the role to retrieve claims for (GUID format)</param>
+    /// <response code="200">Returns list of claims for specified role (empty if no claims exist)</response>
+    /// <response code="400">If role ID is missing or invalid</response>
+    /// <response code="401">If user is not authenticated</response>
+    /// <response code="403">If user lacks required permissions</response>
+    /// <response code="404">If specified role doesn't exist</response>
+    /// <response code="500">If there was an internal server error</response>
     [ProducesResponseType(typeof(List<RoleClaimDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [HttpGet("GetClaimsByRoleId/{roleId}")]
     public async Task<ActionResult<List<RoleClaimDto>>> GetClaimsByRoleId(string roleId)
     {
         var response = await _roleClaimService.GetClaimsByRoleId(roleId);
