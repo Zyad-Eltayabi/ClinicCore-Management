@@ -19,7 +19,7 @@ public class RoleService : IRoleService
     {
         // check if role exists
         if (await _roleManager.RoleExistsAsync(roleDto.Name))
-            return Result<RoleDto>.Failure("Role already exists", ServiceErrorType.ValidationError);
+            return Result<RoleDto>.Failure("Role already exists", ServiceErrorType.Conflict);
 
         // create role
         var role = new IdentityRole(roleDto.Name);
