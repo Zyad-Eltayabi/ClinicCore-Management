@@ -159,16 +159,59 @@ public class RoleClaimController : Controller
         };
     }
 
+    /// <summary>
+    ///     Deletes a specific claim assignment from a role.
+    /// </summary>
+    /// <remarks>
+    ///     ### Business Rules:
+    ///     - The role must exist in the system
+    ///     - The claim value cannot be empty or whitespace
+    ///     - The specified claim must exist for the role
+    ///     ### Sample Request:
+    ///     ```json
+    ///     {
+    ///     "roleId": "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
+    ///     "claimValue": "view-doctors"
+    ///     }
+    ///     ```
+    ///     ### Success Response Example:
+    ///     ```json
+    ///     "Role claim removed successfully"
+    ///     ```
+    ///     ### Error Response Examples:
+    ///     **Validation Error (400):**
+    ///     ```json
+    ///     "Claim value is required"
+    ///     ```
+    ///     **Role Not Found (404):**
+    ///     ```json
+    ///     "Role not found"
+    ///     ```
+    ///     **Claim Not Found (404):**
+    ///     ```json
+    ///     "Claim not found for this role"
+    ///     ```
+    ///     **Database Error (500):**
+    ///     ```json
+    ///     "Failed to remove claim"
+    ///     ```
+    /// </remarks>
+    /// <param name="DeleteRoleClaimDto">The role claim deletion data transfer object</param>
+    /// <response code="200">Returns success message when claim is removed</response>
+    /// <response code="400">If the request is invalid (missing claim value)</response>
+    /// <response code="401">If user is not authenticated</response>
+    /// <response code="403">If user is not SuperAdmin</response>
+    /// <response code="404">If the specified role or claim doesn't exist</response>
+    /// <response code="500">If there was an internal server error</response>
+    /// <response code="503">If the service is temporarily unavailable</response>
     [HttpDelete("DeleteRoleClaim")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> DeleteRoleClaim([FromBody] DeleteRoleClaimDto dto)
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
+    public async Task<IActionResult> DeleteRoleClaim([FromBody] DeleteRoleClaimDto dto)
     {
         var response = await _roleClaimService.DeleteRoleClaimAsync(dto);
-
         return response.ErrorType switch
         {
             ServiceErrorType.Success => Ok(response.Data),
