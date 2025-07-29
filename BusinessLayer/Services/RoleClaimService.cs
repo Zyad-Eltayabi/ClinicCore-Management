@@ -75,7 +75,7 @@ public class RoleClaimService : IRoleClaimService
             c.Value == roleClaimDto.OldClaimValue);
 
         if (matchedClaim is null)
-            return Result<string>.Failure("Old claim not found for this role", ServiceErrorType.ValidationError);
+            return Result<string>.Failure("Old claim not found for this role", ServiceErrorType.NotFound);
 
         // Ensure the new claim does not already exist
         var isNewClaimExists = roleClaims.Any(c =>
@@ -83,7 +83,7 @@ public class RoleClaimService : IRoleClaimService
             c.Value == roleClaimDto.NewClaimValue);
 
         if (isNewClaimExists)
-            return Result<string>.Failure("New claim already exists for this role", ServiceErrorType.ValidationError);
+            return Result<string>.Failure("New claim already exists for this role", ServiceErrorType.Conflict);
 
         // Remove the old claim
         var removeResult = await _roleManager.RemoveClaimAsync(role, matchedClaim);
