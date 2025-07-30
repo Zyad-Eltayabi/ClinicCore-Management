@@ -197,13 +197,39 @@ namespace ClinicAPI.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        ///     Revokes a refresh token, preventing it from being used for future token refreshes.
+        /// </summary>
+        /// <param name="revokeTokenDto">
+        ///     The DTO containing the refresh token to revoke. If not provided, attempts to revoke the refresh token from cookies.
+        /// </param>
+        /// <remarks>
+        ///     ## This endpoint invalidates refresh tokens for security purposes.
+        ///     ### Business Rules:
+        ///     - Token must be valid and not already revoked
+        ///     - Token must belong to an existing user
+        ///     - Once revoked, token cannot be used again
+        ///     ### Sample request:
+        ///     POST /api/auth/revoke-token
+        ///     ``` json
+        ///     {
+        ///     "token": "base64EncodedRefreshToken"
+        ///     }
+        ///     ```
+        ///     ### Sample success response:
+        ///     ``` json
+        ///     true
+        ///     ```
+        /// </remarks>
+        /// <response code="200">Returns true when token is successfully revoked</response>
+        /// <response code="400">If the token is invalid, expired or already revoked</response>
+        /// <response code="500">If an unexpected error occurs during token revocation</response>
         [AllowAnonymous]
         [HttpPost]
-        [Route("RevokeToken")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Route("revoke-token")]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenDto revokeTokenDto)
         {
             var token = revokeTokenDto.Token ?? Request.Cookies["RefreshToken"];
