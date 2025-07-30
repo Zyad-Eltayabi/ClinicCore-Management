@@ -2,6 +2,7 @@ using System.Diagnostics;
 using ClinicAPI.Middlewares;
 using DataAccessLayer.Persistence;
 using DataAccessLayer.Seeding;
+using DomainLayer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.FluentValidation.AspNetCore;
@@ -35,12 +36,14 @@ public static class ApiExtensions
             using (var scope = app.Services.CreateScope())
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
                 await dbContext.Database.MigrateAsync();
 
                 var seeder = new PermissionSeeder(dbContext, roleManager);
                 await seeder.SeedAsync();
+                await ApplicationUserSeeder.SeedAsync(userManager, roleManager);
             }
         }
         catch (Exception e)
