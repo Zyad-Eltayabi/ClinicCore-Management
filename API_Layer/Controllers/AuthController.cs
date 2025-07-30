@@ -154,13 +154,37 @@ namespace ClinicAPI.Controllers
             Response.Cookies.Append("RefreshToken", token, cookieOptions);
         }
 
+        /// <summary>
+        ///     Refreshes an expired JWT access token using a valid refresh token.
+        /// </summary>
+        /// <remarks>
+        ///     ## This endpoint allows users to obtain a new access token using their refresh token.
+        ///     ### Business Rules:
+        ///     - Refresh token must be valid and not expired
+        ///     - Refresh token must not be revoked
+        ///     - A new refresh token is generated with each use
+        ///     ### Sample success response:
+        ///     ``` json
+        ///     {
+        ///     "message": "Token refreshed successfully",
+        ///     "token": "eyJhbGci...[JWT token]",
+        ///     "isAuthenticated": true,
+        ///     "userName": "johndoe",
+        ///     "email": "john.doe@example.com",
+        ///     "roles": ["User"],
+        ///     "refreshTokenExpiresOn": "2024-01-01T00:00:00"
+        ///     }
+        ///     ```
+        /// </remarks>
+        /// <response code="200">Returns new access token and refresh token when successful</response>
+        /// <response code="400">If the refresh token is invalid, expired or revoked</response>
+        /// <response code="500">If an unexpected error occurs during token refresh</response>
         [AllowAnonymous]
         [HttpPost]
-        [Route("RefreshToken")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Route("refresh-token")]
+        [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> RefreshToken()
         {
             var refreshToken = Request.Cookies["RefreshToken"];
