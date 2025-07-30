@@ -89,19 +89,55 @@ namespace ClinicAPI.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        ///     Authenticates a user and generates access and refresh tokens.
+        /// </summary>
+        /// <param name="loginDto">
+        ///     The login credentials containing:
+        ///     - Email (required): User's registered email address
+        ///     - Password (required): User's password
+        /// </param>
+        /// <remarks>
+        ///     ## This endpoint authenticates users and provides JWT tokens for API access.
+        ///     ### Validation Rules:
+        ///     - Email: Required, must be registered in system
+        ///     - Password: Required, must match stored password
+        ///     ### Sample request:
+        ///     POST /api/auth/login
+        ///     ``` json
+        ///     {
+        ///     "email": "john.doe@example.com",
+        ///     "password": "MyP@ssw0rd"
+        ///     }
+        ///     ```
+        ///     ### Sample success response:
+        ///     ``` json
+        ///     {
+        ///     "message": "Login successful",
+        ///     "token": "eyJhbGci...[JWT token]",
+        ///     "isAuthenticated": true,
+        ///     "userName": "johndoe",
+        ///     "email": "john.doe@example.com",
+        ///     "roles": ["User"],
+        ///     "refreshTokenExpiresOn": "2024-01-01T00:00:00"
+        ///     }
+        ///     ```
+        /// </remarks>
+        /// <response code="200">Returns the authentication response with JWT token when login is successful</response>
+        /// <response code="400">If the login credentials are invalid</response>
+        /// <response code="500">If an unexpected error occurs during authentication</response>
         [AllowAnonymous]
         [HttpPost]
-        [Route("Login")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Route("login")]
+        [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> Login([FromBody] LoginDto loginDto)
         {
             var response = await _authService.Login(loginDto);
 
             if (response.IsAuthenticated is false)
-                return BadRequest(response.Message);
+                return BadRequest(response);
 
             SetTokenCookie(response.RefreshToken, response.RefreshTokenExpiresOn);
 
